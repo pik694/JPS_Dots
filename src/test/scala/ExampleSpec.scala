@@ -17,4 +17,6 @@ class ExampleSpec extends FlatSpec with Matchers {
       emptyStack.pop()
     }
   }
+
+
 }
