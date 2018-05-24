@@ -1,5 +1,6 @@
 package dots.gui
 
+import javafx.beans.NamedArg
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.scene.paint.Color
@@ -8,7 +9,7 @@ import scalafx.scene.shape.{Circle, Line}
 import scala.annotation.tailrec
 
 
-class Board(val rows: Int, val columns: Int) extends Pane {
+class Board(@NamedArg("rows")val rows: Int, @NamedArg("columns") columns: Int) extends Pane {
   private val STROKE_WIDTH: Double = 2
 
   private def generateLines: Seq[Line] = {
