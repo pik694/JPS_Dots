@@ -10,7 +10,10 @@ import scala.annotation.tailrec
 
 
 class Board(@NamedArg("rows")val rows: Int, @NamedArg("columns") columns: Int) extends Pane {
+
   private val STROKE_WIDTH: Double = 2
+
+  children = generateLines
 
   private def generateLines: Seq[Line] = {
 
@@ -52,17 +55,15 @@ class Board(@NamedArg("rows")val rows: Int, @NamedArg("columns") columns: Int) e
 
   }
 
-  children = generateLines
-
 
   def addPoint(row: Int, column: Int, colour: Color): Unit = {
 
-    val circle = new Circle {
-      centerY <== Board.this.height / rows * row
-      centerX <== Board.this.width / columns * column
-      radius = STROKE_WIDTH * 4
-      fill = colour
-    }
+      val circle = new Circle {
+        centerY <== Board.this.height / rows * row
+        centerX <== Board.this.width / columns * column
+        radius = STROKE_WIDTH * 4
+        fill = colour
+      }
 
     children.add(circle.asInstanceOf[Node])
   }
