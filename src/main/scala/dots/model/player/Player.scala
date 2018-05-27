@@ -5,7 +5,7 @@ import scalafx.scene.image.Image
 import scalafx.scene.paint.Color
 
 trait Player {
-  val photo: Image
+//  val photo: Image
   val color: Color
 
   def makeMove(): Point

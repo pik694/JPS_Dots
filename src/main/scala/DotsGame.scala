@@ -53,9 +53,4 @@ object DotsGame extends JFXApp {
 
   MainScene.setBoardSize(settings.rows, settings.columns)
 
-  Game.playerA_() = HumanPlayer(MainScene.playerAColor)
-  Game.playerB_() = HumanPlayer(MainScene.playerBColor)
-
-  Game.move_() = Game.playerB_.value
-
 }

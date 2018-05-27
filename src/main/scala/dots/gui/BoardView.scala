@@ -9,7 +9,7 @@ import scalafx.scene.shape.{Circle, Line}
 import scala.annotation.tailrec
 
 
-class Board(@NamedArg("rows") val rows: Int, @NamedArg("columns") columns: Int) extends Pane {
+class BoardView(@NamedArg("rows") val rows: Int, @NamedArg("columns") columns: Int) extends Pane {
 
   private val STROKE_WIDTH: Double = 2
 
@@ -24,10 +24,10 @@ class Board(@NamedArg("rows") val rows: Int, @NamedArg("columns") columns: Int) 
           index + 1,
           seq :+ new Line {
             strokeWidth() = STROKE_WIDTH
-            startY <== (Board.this.height / rows) * index
-            endY <== (Board.this.height / rows) * index
+            startY <== (BoardView.this.height / rows) * index
+            endY <== (BoardView.this.height / rows) * index
             startX = 0
-            endX <== Board.this.width
+            endX <== BoardView.this.width
           }
         )
         case false => seq
@@ -42,9 +42,9 @@ class Board(@NamedArg("rows") val rows: Int, @NamedArg("columns") columns: Int) 
           seq :+ new Line {
             strokeWidth() = STROKE_WIDTH
             startY = 0
-            endY <== Board.this.height
-            startX <== (Board.this.width / columns) * index
-            endX <== (Board.this.width / columns) * index
+            endY <== BoardView.this.height
+            startX <== (BoardView.this.width / columns) * index
+            endX <== (BoardView.this.width / columns) * index
           }
         )
         case false => seq
@@ -59,8 +59,8 @@ class Board(@NamedArg("rows") val rows: Int, @NamedArg("columns") columns: Int) 
   def addPoint(row: Int, column: Int, colour: Color): Unit = {
 
     val circle = new Circle {
-      centerY <== Board.this.height / rows * row
-      centerX <== Board.this.width / columns * column
+      centerY <== BoardView.this.height / rows * row
+      centerX <== BoardView.this.width / columns * column
       radius = STROKE_WIDTH * 4
       fill = colour
     }

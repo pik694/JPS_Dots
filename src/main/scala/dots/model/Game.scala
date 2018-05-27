@@ -30,7 +30,7 @@ object Game {
 
   def canMove(point: Dot): Boolean = true
 
-  def move(dot: Dot) = _
+  def move(dot: Dot) = print("Hello World")
 
 }
 

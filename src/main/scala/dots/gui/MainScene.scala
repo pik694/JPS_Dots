@@ -16,7 +16,7 @@ object MainScene extends Scene(1000, 800) {
 
 
 
-  private var board = new Board(10, 10) {
+  private var board = new BoardView(10, 10) {
     hgrow = Priority.Always
     vgrow = Priority.Always
   }
@@ -38,7 +38,7 @@ object MainScene extends Scene(1000, 800) {
   def setBoardSize(rows: Int, columns: Int): Unit = {
     parent.children.remove(board)
 
-    board = new Board(rows, columns) {
+    board = new BoardView(rows, columns) {
       hgrow = Priority.Always
       vgrow = Priority.Always
     }
