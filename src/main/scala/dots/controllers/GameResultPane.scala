@@ -1,4 +1,4 @@
-package dots.gui
+package dots.controllers
 
 class GameResultPane {
 

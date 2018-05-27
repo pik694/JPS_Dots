@@ -1,4 +1,4 @@
-package dots.gui
+package dots.controllers
 
 import dots.model.player.Player
 

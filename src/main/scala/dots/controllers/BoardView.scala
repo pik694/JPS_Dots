@@ -1,4 +1,4 @@
-package dots.gui
+package dots.controllers
 
 import javafx.beans.NamedArg
 import scalafx.scene.Node
