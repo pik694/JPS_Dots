@@ -5,13 +5,32 @@ import scalafx.beans.property.ObjectProperty
 
 object Game {
 
-  val playerA_ = new ObjectProperty[Player]()
-  val playerB_ = new ObjectProperty[Player]()
+  private val _playerA = new ObjectProperty[Player]()
+  private val _playerB = new ObjectProperty[Player]()
 
-  val score_ = new ObjectProperty[(Int, Int)]()
+  private var _matrix: Array[Array[Player]] = _
 
-  val move_ = new ObjectProperty[Player]()
+  private val _score = new ObjectProperty[(Int, Int)]()
 
+  private val _move = new ObjectProperty[Player]()
+
+
+  def playerA = _playerA
+  def playerB = _playerB
+
+  def score = _score
+  def nextMovePlayer = _move
+
+  def matrix = _matrix
+
+
+  def startGame(rows: Int, columns: Int, playerA:Player, playerB: Player)={
+
+  }
+
+  def canMove(point: Dot): Boolean = true
+
+  def move(dot: Dot) = _
 
 }
 

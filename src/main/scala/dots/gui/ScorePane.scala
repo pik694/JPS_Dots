@@ -25,7 +25,7 @@ object ScorePane extends VBox(MainScene.SPACING) {
         Game.move_.onChange { (_, _, newValue) => this.underline = newValue == Game.playerA_.value }
       }, 0, 0)
       add(new ImageView {
-        Game.playerA_.onChange { (_, _, newValue) => this.image = newValue.photo }
+//        Game.playerA_.onChange { (_, _, newValue) => this.image = newValue.photo }
       }, 1, 0)
       add(new Text(": 100") {
         alignment = Pos.BottomRight
@@ -39,7 +39,7 @@ object ScorePane extends VBox(MainScene.SPACING) {
         Game.move_.onChange { (_, _, newValue) => this.underline = newValue == Game.playerB_.value }
       }, 0, 1)
       add(new ImageView {
-        Game.playerB_.onChange { (_, _, newValue) => this.image = newValue.photo }
+//        Game.playerB_.onChange { (_, _, newValue) => this.image = newValue.photo }
       }, 1, 1)
       add(new Text(": 0") {
         alignment = Pos.BottomRight
