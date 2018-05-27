@@ -4,9 +4,9 @@ package dots.gui
 import javafx.event.ActionEvent
 import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.{Insets, Orientation}
-import scalafx.scene.Scene
+import scalafx.scene.{Scene}
 import scalafx.scene.control._
-import scalafx.scene.layout.{HBox, Priority, VBox}
+import scalafx.scene.layout.{HBox, Pane, Priority, VBox}
 import scalafx.scene.paint.Color
 
 object MainScene extends Scene(1000, 800) {
@@ -16,30 +16,19 @@ object MainScene extends Scene(1000, 800) {
   lazy val playerAColor = Color.web("RED", 1)
   lazy val playerBColor = Color.web("BLUE", 1)
 
-  private val isPlaying = new BooleanProperty()
-
-  GameSettingsPane.disable <== isPlaying
-
-  var board = new Board(10, 10) {
+  private var board = new Board(10, 10) {
     hgrow = Priority.Always
     vgrow = Priority.Always
   }
 
-  val startButton = new Button("Start")
 
-  startButton.onAction = (_: ActionEvent) => {
-    isPlaying() = true
-  }
-
-  root = new HBox(SPACING) {
+  private val parent = new HBox(SPACING) {
     padding = Insets(SPACING)
     children = Seq(
       new VBox(SPACING) {
         padding = Insets(20)
         children = Seq(
-          GameSettingsPane,
           new Separator,
-          startButton
         )
       },
       new Separator {
@@ -49,5 +38,18 @@ object MainScene extends Scene(1000, 800) {
     )
   }
 
+  root = parent
+
+  def setBoardSize(rows: Int, columns: Int): Unit = {
+    parent.children.remove(board)
+
+    board = new Board(rows, columns) {
+      hgrow = Priority.Always
+      vgrow = Priority.Always
+    }
+
+    parent.children.add(board)
+
+  }
 
 }

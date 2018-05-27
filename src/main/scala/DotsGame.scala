@@ -19,11 +19,14 @@ object DotsGame extends JFXApp {
     dialog.dialogPane().getButtonTypes.addAll(startButtonType, ButtonType.Cancel)
 
     val startButton = dialog.dialogPane().lookupButton(startButtonType)
-    startButton.setDisable(true)
 
     dialog.resultConverter = dialogButton =>
       if (dialogButton == startButtonType)
-        GameSettings(PlayerA(Color.web("RED")), PlayerA(Color.web("RED")), 1, 1)
+        GameSettings(
+          GameSettingsPane.playerA,
+          GameSettingsPane.playerB,
+          GameSettingsPane.columns,
+          GameSettingsPane.rows)
       else null
 
     dialog.dialogPane().setContent(GameSettingsPane)
@@ -41,5 +44,15 @@ object DotsGame extends JFXApp {
   }
 
   val settings = showSettingsDialog
+
+  if (settings == null) {
+    System.exit(0)
+  }
+
+
+  MainScene.setBoardSize(settings.rows, settings.columns)
+
+
+
 
 }
