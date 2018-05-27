@@ -11,8 +11,8 @@ object MainScene extends Scene(1000, 800) {
 
   val SPACING = 10
 
-  lazy val playerAColor = Color.web("RED", 1)
-  lazy val playerBColor = Color.web("BLUE", 1)
+  val playerAColor = Color.web("RED", 1)
+  val playerBColor = Color.web("BLUE", 1)
 
   private var board = new Board(10, 10) {
     hgrow = Priority.Always

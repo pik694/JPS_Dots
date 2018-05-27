@@ -1,7 +1,6 @@
 package dots.gui
 
 import dots.gui.MainScene._
-import dots.model.Player
 import dots.model.player.{HumanPlayer, Player}
 import scalafx.geometry.Insets
 import scalafx.scene.control._
