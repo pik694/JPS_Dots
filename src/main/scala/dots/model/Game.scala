@@ -1,5 +1,5 @@
 package dots.model
 
-object Game{
+object Game {
 
 }

@@ -53,6 +53,4 @@ object DotsGame extends JFXApp {
   MainScene.setBoardSize(settings.rows, settings.columns)
 
 
-
-
 }

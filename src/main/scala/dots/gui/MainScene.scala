@@ -1,12 +1,10 @@
 package dots.gui
 
 
-import javafx.event.ActionEvent
-import scalafx.beans.property.BooleanProperty
 import scalafx.geometry.{Insets, Orientation}
-import scalafx.scene.{Scene}
+import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.layout.{HBox, Pane, Priority, VBox}
+import scalafx.scene.layout.{HBox, Priority, VBox}
 import scalafx.scene.paint.Color
 
 object MainScene extends Scene(1000, 800) {

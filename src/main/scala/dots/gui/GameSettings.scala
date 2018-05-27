@@ -1,6 +1,6 @@
 package dots.gui
 
-import dots.model.Player
+import dots.model.player.Player
 
-case class GameSettings(playerA: Player, playerB: Player, columns : Int, rows: Int)
+case class GameSettings(playerA: Player, playerB: Player, columns: Int, rows: Int)
 
