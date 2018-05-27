@@ -1,11 +1,12 @@
 package dots
 
 import dots.gui.{GameSettings, GameSettingsPane, MainScene}
+import dots.model.Game
+import dots.model.player.HumanPlayer
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control.{ButtonType, Dialog}
-import scalafx.scene.paint.Color
 
 
 object DotsGame extends JFXApp {
@@ -52,5 +53,9 @@ object DotsGame extends JFXApp {
 
   MainScene.setBoardSize(settings.rows, settings.columns)
 
+  Game.playerA_() = HumanPlayer(MainScene.playerAColor)
+  Game.playerB_() = HumanPlayer(MainScene.playerBColor)
+
+  Game.move_() = Game.playerB_.value
 
 }

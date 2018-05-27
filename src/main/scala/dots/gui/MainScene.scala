@@ -14,6 +14,8 @@ object MainScene extends Scene(1000, 800) {
   val playerAColor = Color.web("RED", 1)
   val playerBColor = Color.web("BLUE", 1)
 
+
+
   private var board = new Board(10, 10) {
     hgrow = Priority.Always
     vgrow = Priority.Always
@@ -23,12 +25,7 @@ object MainScene extends Scene(1000, 800) {
   private val parent = new HBox(SPACING) {
     padding = Insets(SPACING)
     children = Seq(
-      new VBox(SPACING) {
-        padding = Insets(20)
-        children = Seq(
-          new Separator,
-        )
-      },
+      ScorePane,
       new Separator {
         orientation = Orientation.Vertical
       },
