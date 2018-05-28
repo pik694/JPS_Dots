@@ -9,7 +9,6 @@ import dots.model.{Dot, Game}
 import javafx.scene.input.MouseEvent
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
-import scalafx.scene.paint.Color
 
 class MainController extends jfxf.Initializable {
 
@@ -64,6 +63,15 @@ class MainController extends jfxf.Initializable {
 
   def connectDots(dots: Seq[Dot]) {
 
+    //    @tailrec
+    //    def drawLines(dots: Seq[Dot]): Unit ={
+    //      dots match {
+    //        case front :: tail =>
+    //          board.drawLine(front, tail.)
+    //        case null => _
+    //      }
+    //    }
+
   }
 
   def addDot(dot: Dot): Unit = {
@@ -81,11 +89,15 @@ object MainController {
 
 
   def connectDots(dots: Seq[Dot]): Unit = {
-    delegate.connectDots(dots)
+    if (delegate != null) {
+      delegate.connectDots(dots)
+    }
   }
 
   def addDot(dot: Dot): Unit = {
-    delegate.addDot(dot)
+    if (delegate != null) {
+      delegate.addDot(dot)
+    }
   }
 
 }
