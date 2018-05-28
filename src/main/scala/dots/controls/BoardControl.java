@@ -1,14 +1,24 @@
 package dots.controls;
 
+import dots.model.Dot;
+import dots.model.DotView;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
 public class BoardControl extends Pane {
+
+    private IntegerProperty rows = new SimpleIntegerProperty();
+    private IntegerProperty columns = new SimpleIntegerProperty();
+
+    private ArrayList<Line> rowLines = new ArrayList<>();
+    private ArrayList<Line> columnLines = new ArrayList<>();
+    private ArrayList<Circle> circles = new ArrayList<>();
 
     public BoardControl() {
 
@@ -25,26 +35,11 @@ public class BoardControl extends Pane {
         });
 
         heightProperty().addListener(observable -> {
-            for (int i = 0; i < rowLines.size(); ++i) {
-                Line line = rowLines.get(i);
-                double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (i + 1);
-                line.startYProperty().set(y);
-                line.endYProperty().set(y);
-            }
-            for (Line line : columnLines) line.endYProperty().set(heightProperty().doubleValue());
-
+            update();
         });
 
         widthProperty().addListener((observable -> {
-            for (int i = 0; i < columnLines.size(); ++i) {
-                Line line = columnLines.get(i);
-                double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (i + 1);
-
-                line.startXProperty().set(x);
-                line.endXProperty().set(x);
-            }
-
-            for (Line line : rowLines) line.endXProperty().set(widthProperty().doubleValue());
+            update();
         }));
 
     }
@@ -61,9 +56,6 @@ public class BoardControl extends Pane {
             this.generateColumns(newVal.intValue());
         });
     }
-
-    private IntegerProperty rows = new SimpleIntegerProperty();
-    private IntegerProperty columns = new SimpleIntegerProperty();
 
     public int getRows() {
         return rows.get();
@@ -89,8 +81,54 @@ public class BoardControl extends Pane {
         this.rows.set(rows);
     }
 
-    private ArrayList<Line> rowLines = new ArrayList<>();
-    private ArrayList<Line> columnLines = new ArrayList<>();
+    public void drawDot(DotView dot) {
+        double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.point().row() + 1);
+        double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (dot.point().column() + 1);
+
+        Circle circle = new Circle();
+
+        circle.fillProperty().setValue(dot.color().delegate());
+        circle.centerXProperty().set(x);
+        circle.centerYProperty().set(y);
+
+        circle.setUserData(dot);
+        circle.setRadius(6);
+
+        getChildren().add(circle);
+        circles.add(circle);
+
+    }
+
+    private void update() {
+
+        for (int i = 0; i < rowLines.size(); ++i) {
+            Line line = rowLines.get(i);
+            double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (i + 1);
+            line.startYProperty().set(y);
+            line.endYProperty().set(y);
+        }
+        for (Line line : columnLines) line.endYProperty().set(heightProperty().doubleValue());
+
+        for (int i = 0; i < columnLines.size(); ++i) {
+            Line line = columnLines.get(i);
+            double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (i + 1);
+
+            line.startXProperty().set(x);
+            line.endXProperty().set(x);
+        }
+
+        for (Line line : rowLines) line.endXProperty().set(widthProperty().doubleValue());
+
+        for(Circle circle : circles){
+            DotView dot = (DotView) circle.getUserData();
+            double x = widthProperty().doubleValue() / (columnLines.size() + 1) * ( dot.point().column() + 1);
+            double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.point().row() + 1);
+
+            circle.centerYProperty().set(y);
+            circle.centerXProperty().set(x);
+        }
+
+    }
 
     private void generateRows(Integer rows) {
         for (int i = 0; i < rows; ++i) {
