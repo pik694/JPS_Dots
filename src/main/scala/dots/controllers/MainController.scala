@@ -6,8 +6,10 @@ import java.util
 import dots.controls.{DotView, PlayerView}
 import dots.model.player.HumanPlayer
 import dots.model.{Dot, Game}
+import javafx.scene.input.MouseEvent
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
+import scalafx.scene.paint.Color
 
 class MainController extends jfxf.Initializable {
 
@@ -47,6 +49,16 @@ class MainController extends jfxf.Initializable {
     })
 
     Game(10, 10, new HumanPlayer, new HumanPlayer)
+
+  }
+
+  protected def mouseClicked(event: MouseEvent): Unit = {
+
+    val point = board.translate(event)
+
+    if (point != null) {
+      Game.nextMovePlayer().acceptMove(point)
+    }
 
   }
 

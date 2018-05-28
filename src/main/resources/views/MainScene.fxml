@@ -32,6 +32,6 @@
         </GridPane>
     </VBox>
     <Separator orientation="VERTICAL"/>
-    <BoardControl fx:id="board" columns="10" rows="10" HBox.hgrow="ALWAYS"/>
+    <BoardControl fx:id="board" columns="10" rows="10" HBox.hgrow="ALWAYS" onMouseClicked="#mouseClicked"/>
 
 </HBox>

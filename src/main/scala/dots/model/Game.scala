@@ -1,5 +1,6 @@
 package dots.model
 
+import dots.controllers.MainController
 import dots.model.player.Player
 import scalafx.beans.property.ObjectProperty
 
@@ -26,8 +27,19 @@ class Game(val playerA: Player, val playerB: Player, private val _matrix: Array[
   }
 
   def move(dot: Dot): Unit = {
-    if (canMove(dot))
+    if (canMove(dot)) {
       _matrix(dot.point.row)(dot.point.column) = dot.player
+
+//      score() = (score()._1 + 1 ,score()._2+1)
+
+      MainController.addDot(dot)
+      if (nextMovePlayer() == playerA){
+        nextMovePlayer() = playerB
+      }
+      else{
+        nextMovePlayer() = playerA
+      }
+    }
   }
 
 }

@@ -1,8 +1,10 @@
 package dots.controls;
 
+import dots.model.Point;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
@@ -89,6 +91,38 @@ public class BoardControl extends Pane {
         getChildren().add(dot.delegate());
         circles.add(dot);
 
+    }
+
+    public Point translate(MouseEvent event) {
+
+        double xDistance = widthProperty().doubleValue() / (columnLines.size() + 1);
+        double yDistance = heightProperty().doubleValue() / (rowLines.size() + 1);
+
+        double x = event.getX() / xDistance;
+        double y = event.getY() / yDistance;
+
+        Integer column = getCoordinate(x);
+        Integer row = getCoordinate(y);
+
+        if (row == null || column == null
+                || row < 0
+                || row >= rowLines.size()
+                || column < 0
+                || column >= columnLines.size())
+
+            return null;
+
+
+        return new Point(row, column);
+    }
+
+    private Integer getCoordinate(double a) {
+        int a_ = ((int) (a * 10)) % 10;
+        if (a_ < 4) {
+            return ((int) a) - 1;
+        } else if (a_ > 6) {
+            return (int) a;
+        } else return null;
     }
 
     private void update() {
