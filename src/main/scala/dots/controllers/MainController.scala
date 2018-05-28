@@ -3,15 +3,13 @@ package dots.controllers
 import java.net.URL
 import java.util
 
-import dots.model.{Dot, DotView, Point}
+import dots.controls.DotView
+import dots.model.Dot
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
 import scalafx.scene.paint.Color
 
 class MainController extends jfxf.Initializable {
-
-  private val playerAColor = Color.Red
-  private val playerBColor = Color.Blue
 
   @jfxf.FXML
   private var playerAText: jfxt.Text = null
@@ -29,21 +27,20 @@ class MainController extends jfxf.Initializable {
   private var board: dots.controls.BoardControl = null
 
   def initialize(url: URL, rb: util.ResourceBundle) {
-    playerAText.setFill(playerAColor)
-    playerBText.setFill(playerBColor)
+//    playerAText.setFill(playerAColor)
+//    playerBText.setFill(playerBColor)
 
     playerAText.setUnderline(true)
 
-  }
-
-
-  def connectDots(dots: Dot){
+    board.drawDot(new DotView(1,2,Color.Red))
 
   }
 
-  def addDot(dot: Dot){
-    board.drawDot(DotView(dot.point, Color.Red))
+  def connectDots(dots: Seq[Dot]){
+
   }
 
+  def addDot(dot: Dot): Unit ={
 
+  }
 }

@@ -1,12 +1,9 @@
 package dots.controls;
 
-import dots.model.Dot;
-import dots.model.DotView;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ public class BoardControl extends Pane {
 
     private ArrayList<Line> rowLines = new ArrayList<>();
     private ArrayList<Line> columnLines = new ArrayList<>();
-    private ArrayList<Circle> circles = new ArrayList<>();
+    private ArrayList<DotView> circles = new ArrayList<>();
 
     public BoardControl() {
 
@@ -82,20 +79,15 @@ public class BoardControl extends Pane {
     }
 
     public void drawDot(DotView dot) {
-        double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.point().row() + 1);
-        double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (dot.point().column() + 1);
 
-        Circle circle = new Circle();
+        double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.row() + 1);
+        double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (dot.column() + 1);
 
-        circle.fillProperty().setValue(dot.color().delegate());
-        circle.centerXProperty().set(x);
-        circle.centerYProperty().set(y);
+        dot.centerX().value_$eq(x);
+        dot.centerY().value_$eq(y);
 
-        circle.setUserData(dot);
-        circle.setRadius(6);
-
-        getChildren().add(circle);
-        circles.add(circle);
+        getChildren().add(dot.delegate());
+        circles.add(dot);
 
     }
 
@@ -119,13 +111,12 @@ public class BoardControl extends Pane {
 
         for (Line line : rowLines) line.endXProperty().set(widthProperty().doubleValue());
 
-        for(Circle circle : circles){
-            DotView dot = (DotView) circle.getUserData();
-            double x = widthProperty().doubleValue() / (columnLines.size() + 1) * ( dot.point().column() + 1);
-            double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.point().row() + 1);
+        for (DotView dot : circles) {
+            double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (dot.column() + 1);
+            double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.row() + 1);
 
-            circle.centerYProperty().set(y);
-            circle.centerXProperty().set(x);
+            dot.centerX().value_$eq(x);
+            dot.centerY().value_$eq(y);
         }
 
     }
