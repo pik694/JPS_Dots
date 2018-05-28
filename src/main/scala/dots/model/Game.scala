@@ -6,10 +6,13 @@ import scalafx.beans.property.ObjectProperty
 
 class Game(val playerA: Player,val playerB: Player, private val _matrix: Array[Array[Player]]) {
 
+  def this(rows: Int, columns: Int, playerA:Player, playerB: Player) = this(playerA, playerB, Array.ofDim[Player](rows, columns))
+
   private val _score = new ObjectProperty[(Int, Int)]()
   private val _move = new ObjectProperty[Player]()
 
-  def this(rows: Int, columns: Int, playerA:Player, playerB: Player) = this(playerA, playerB, Array.ofDim[Player](rows, columns))
+  _move() = playerA
+
 
   def score = _score
 

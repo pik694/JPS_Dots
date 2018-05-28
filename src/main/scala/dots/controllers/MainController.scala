@@ -3,7 +3,7 @@ package dots.controllers
 import java.net.URL
 import java.util
 
-import dots.controls.DotView
+import dots.controls.{DotView, PlayerView}
 import dots.model.player.HumanPlayer
 import dots.model.{Dot, Game}
 import javafx.scene.{text => jfxt}
@@ -28,22 +28,33 @@ class MainController extends jfxf.Initializable {
   private var board: dots.controls.BoardControl = null
 
   def initialize(url: URL, rb: util.ResourceBundle) {
-//    playerAText.setFill(playerAColor)
-//    playerBText.setFill(playerBColor)
+    Game.playerA.onChange((_, _, newVal) => {
+      playerAText.setFill(PlayerView.color(newVal))
+    })
+    Game.playerB.onChange((_, _, newVal) => {
+      playerBText.setFill(PlayerView.color(newVal))
+    })
+    Game.nextMovePlayer.onChange((_, _, newVal) => {
+      playerAText.setUnderline(newVal == Game.playerA())
+      playerBText.setUnderline(newVal == Game.playerB())
+    })
 
-    playerAText.setUnderline(true)
+    Game.score.onChange((_, _, newVal) => {
+      playerAResult.setText(newVal._1.toString)
+      playerBResult.setText(newVal._2.toString)
+    })
 
-    Game(2, 2, new HumanPlayer, new HumanPlayer)
+    Game(10, 10, new HumanPlayer, new HumanPlayer)
 
-    board.drawDot(new DotView(1,2,Color.Red))
+
 
   }
 
-  def connectDots(dots: Seq[Dot]){
+  def connectDots(dots: Seq[Dot]) {
 
   }
 
-  def addDot(dot: Dot): Unit ={
-
+  def addDot(dot: Dot): Unit = {
+    board.drawDot(new DotView(dot.point.row, dot.point.column, PlayerView.color(dot.player)))
   }
 }
