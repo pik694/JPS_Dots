@@ -4,8 +4,6 @@ import dots.controllers.MainController
 import dots.model.player.Player
 import scalafx.beans.property.ObjectProperty
 
-import scala.annotation.tailrec
-
 class Game(val playerA: Player, val playerB: Player, private val _matrix: Array[Array[Player]]) {
 
   def this(rows: Int, columns: Int, playerA: Player, playerB: Player) = this(playerA, playerB, Array.ofDim[Player](rows, columns))
@@ -15,7 +13,6 @@ class Game(val playerA: Player, val playerB: Player, private val _matrix: Array[
 
   _move() = playerA
 
-
   def score = _score
 
   def nextMovePlayer = _move
@@ -24,60 +21,95 @@ class Game(val playerA: Player, val playerB: Player, private val _matrix: Array[
 
   def isEndOfGame: Boolean = false
 
-  def getNeighbours(dot: Dot): Seq[Dot] = {
+  def getChildren(dot: Dot, parents: Seq[Dot]): Seq[Dot] = {
 
-    def getNeighbour(dot : Dot, row_diff: Int, col_diff : Int ): Dot = {
-      if( dot.point.row + row_diff >= _matrix.length || dot.point.row + row_diff < 0 ||
-        dot.point.column + col_diff >= matrix(0).length || dot.point.column + col_diff < 0 )
-        Dot( Point(-1,-1), null )
+    //TODO: risky code by Bidzyyys xD
+    def getNeighbour(dot: Dot, row_diff: Int, col_diff: Int): Dot = {
+      if (dot.point.row + row_diff >= _matrix.length || dot.point.row + row_diff < 0 ||
+        dot.point.column + col_diff >= matrix(0).length || dot.point.column + col_diff < 0)
+        Dot(Point(-1, -1), null)
       else
-        Dot(Point(dot.point.row+row_diff, dot.point.column+col_diff), _matrix(dot.point.row+row_diff)(dot.point.column+col_diff))
+        Dot(Point(dot.point.row + row_diff, dot.point.column + col_diff), _matrix(dot.point.row + row_diff)(dot.point.column + col_diff))
     }
-    def cus_filter(dot : Dot, player: Player ): Boolean = {
-      dot.player == player
+
+    def cus_filter(dot: Dot, player: Player): Boolean = {
+      dot.player == player && (!parents.contains(dot) || (dot == parents.last && parents.size > 2))
     }
 
     val tmpSeq = Seq[Dot](getNeighbour(dot, -1, -1), getNeighbour(dot, -1, 0), getNeighbour(dot, -1, 1),
-      getNeighbour(dot, 1, 1), getNeighbour(dot,1,0), getNeighbour(dot,1,-1),
+      getNeighbour(dot, 1, 1), getNeighbour(dot, 1, 0), getNeighbour(dot, 1, -1),
       getNeighbour(dot, 0, 1), getNeighbour(dot, 0, 1))
 
     tmpSeq.filter(cus_filter(_, dot.player))
   }
-  
 
-  def isClosedArea(dot: Dot): Boolean = {
 
-    def dfsIsClosedArea(area: Seq[Dot], toVisit: Seq[Dot]): Boolean = {
-
-      if(toVisit.isEmpty)
-        false
-      else if (toVisit.head == dot && area.last != dot)
-        true
-      else
-          dfsIsClosedArea(area ++ Seq[Dot](toVisit.head), getNeighbours(toVisit.head) ++ toVisit.tail)
-    }
-    dfsIsClosedArea(Seq[Dot](dot), getNeighbours(dot))
-  }
+  //  def isClosedArea(dot: Dot): Boolean = {
+  //
+  //    def dfsIsClosedArea(area: Seq[Dot], toVisit: Seq[Dot]): Boolean = {
+  //
+  //      if(toVisit.isEmpty)
+  //        false
+  //      else if (toVisit.head == dot && area.last != dot)
+  //        true
+  //      else
+  //          dfsIsClosedArea(area ++ Seq[Dot](toVisit.head), getNeighbours(toVisit.head) ++ toVisit.tail)
+  //    }
+  //    dfsIsClosedArea(Seq[Dot](dot), getNeighbours(dot))
+  //  }
 
   def canMove(dot: Dot): Boolean = {
     _matrix(dot.point.row)(dot.point.column) == null
   }
 
+  def findHull(start: Dot): Seq[Dot] = {
+
+    def foreachChild(hull: Seq[Dot], children: Seq[Dot]): Seq[Dot] = {
+      children match {
+        case Nil => Seq.empty
+        case head :: tail => {
+          val tmp = findHull(head +: hull)
+          if (tmp.isEmpty) {
+            foreachChild(hull, tail)
+          }
+          else
+            tmp
+        }
+      }
+    }
+
+    def findHull(hull: Seq[Dot]): Seq[Dot] = {
+
+      val current :: tail = hull
+      val children = getChildren(current, hull)
+
+      if (children.isEmpty) {
+        Seq.empty
+      }
+      else if (children.contains(start)) {
+        hull
+      }
+      else {
+        foreachChild(hull, children)
+      }
+    }
+
+    findHull(Seq(start))
+
+  }
+
   def move(dot: Dot): Unit = {
     if (canMove(dot)) {
-      _matrix(dot.point.row)(dot.point.column) = dot.player
-
-//      score() = (score()._1 + 1 ,score()._2+1)
-
       MainController.addDot(dot)
-      if (nextMovePlayer() == playerA){
-        nextMovePlayer() = playerB
-      }
-      else{
-        nextMovePlayer() = playerA
+      matrix(dot.point.row)(dot.point.column) = dot.player
+
+      val hull: Seq[Dot] = findHull(dot)
+      if (hull.nonEmpty){
+          score() = (1,0)
       }
     }
   }
+
 
 }
 
