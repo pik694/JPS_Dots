@@ -5,10 +5,12 @@ import java.util
 
 import dots.controls.{DotView, PlayerView}
 import dots.model.player.HumanPlayer
-import dots.model.{Dot, Game}
+import dots.model.{Dot, Game, Point}
 import javafx.scene.input.MouseEvent
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
+
+import scala.annotation.tailrec
 
 class MainController extends jfxf.Initializable {
 
@@ -47,7 +49,10 @@ class MainController extends jfxf.Initializable {
       playerBResult.setText(newVal._2.toString)
     })
 
-    Game(10, 10, new HumanPlayer, new HumanPlayer)
+    val playera = new HumanPlayer
+    val playerb = new HumanPlayer
+
+    Game(10, 10, playera, playerb)
 
   }
 
@@ -62,15 +67,18 @@ class MainController extends jfxf.Initializable {
   }
 
   def connectDots(dots: Seq[Dot]) {
+    @tailrec
+    def drawLines(dots: Seq[Dot]): Dot ={
+      if (dots.size == 1) dots.head
+      else {
+        val x :: tail = dots
+        board.drawLine(x.point, tail.head.point, PlayerView.color(x.player).delegate)
+        drawLines(tail)
+      }
+    }
 
-    //    @tailrec
-    //    def drawLines(dots: Seq[Dot]): Unit ={
-    //      dots match {
-    //        case front :: tail =>
-    //          board.drawLine(front, tail.)
-    //        case null => _
-    //      }
-    //    }
+    val last = drawLines(dots)
+    board.drawLine(dots.head.point, last.point, PlayerView.color(last.player).delegate)
 
   }
 

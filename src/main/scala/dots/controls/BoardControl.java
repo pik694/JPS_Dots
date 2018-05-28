@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class BoardControl extends Pane {
     private ArrayList<Line> rowLines = new ArrayList<>();
     private ArrayList<Line> columnLines = new ArrayList<>();
     private ArrayList<DotView> circles = new ArrayList<>();
+    private ArrayList<Line> connectionLines = new ArrayList<>();
 
     public BoardControl() {
 
@@ -93,6 +95,34 @@ public class BoardControl extends Pane {
 
     }
 
+    public void drawLine(Point start, Point end, Color color) {
+
+        ArrayList<Point> array = new ArrayList<>();
+
+        array.add(start);
+        array.add(end);
+
+        Line line = new Line();
+        line.setStrokeWidth(2);
+        line.setStroke(color);
+
+        this.getChildren().add(line);
+        this.connectionLines.add(line);
+        line.setUserData(array);
+
+        double startY = heightProperty().doubleValue() / (rowLines.size() + 1) * (start.row() + 1);
+        double startX = widthProperty().doubleValue() / (columnLines.size() + 1) * (start.column() + 1);
+
+        double endY = heightProperty().doubleValue() / (rowLines.size() + 1) * (end.row() + 1);
+        double endX = widthProperty().doubleValue() / (columnLines.size() + 1) * (end.column() + 1);
+
+        line.setStartX(startX);
+        line.setStartY(startY);
+        line.setEndX(endX);
+        line.setEndY(endY);
+
+    }
+
     public Point translate(MouseEvent event) {
 
         double xDistance = widthProperty().doubleValue() / (columnLines.size() + 1);
@@ -151,6 +181,29 @@ public class BoardControl extends Pane {
 
             dot.centerX().value_$eq(x);
             dot.centerY().value_$eq(y);
+        }
+
+        for (Line line : connectionLines) {
+
+            ArrayList<Point> array = (ArrayList<Point>) line.getUserData();
+
+            line.fillProperty().setValue(Color.RED);
+
+            Point start = array.get(0);
+            Point end = array.get(1);
+
+            double startY = heightProperty().doubleValue() / (rowLines.size() + 1) * (start.row() + 1);
+            double startX = widthProperty().doubleValue() / (columnLines.size() + 1) * (start.column() + 1);
+
+            double endY = heightProperty().doubleValue() / (rowLines.size() + 1) * (end.row() + 1);
+            double endX = widthProperty().doubleValue() / (columnLines.size() + 1) * (end.column() + 1);
+
+            line.setStartX(startX);
+            line.setStartY(startY);
+
+            line.setEndX(endX);
+            line.setEndY(endY);
+
         }
 
     }
