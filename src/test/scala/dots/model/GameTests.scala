@@ -59,4 +59,40 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
     And("On non-empty dot is right player")
     game.matrix(dot.point.row)(dot.point.column) should be theSameInstanceAs playerA
   }
+
+  "Given dot" should "should not recognise base" in {
+
+    Given("Empty game")
+    val playerA = new HumanPlayer
+    val playerB = new ComputerPlayer
+    val game = new Game(2, 2, playerA, playerB)
+
+    game.move(Dot(Point(0, 0), playerA))
+
+    When("Player add one dot")
+    val dot = new Dot(Point(0, 0), playerB)
+    game.move(dot)
+
+    Then("Closed area should not be found")
+    assert(!game.isClosedArea(dot))
+  }
+
+  "Given closed area" should "should find closed area" in {
+
+    Given("Empty game")
+    val playerA = new HumanPlayer
+    val playerB = new ComputerPlayer
+    val game = new Game(2, 2, playerA, playerB)
+
+    When("Player add 4 dots")
+    game.move(Dot(Point(0, 0), playerA))
+    game.move(Dot(Point(1, 0), playerA))
+    game.move(Dot(Point(0, 1), playerA))
+    game.move(Dot(Point(1, 1), playerA))
+
+
+    Then("Closed area should be recognized")
+    assert(game.isClosedArea(Dot(Point(1, 1), playerA)))
+  }
+
 }
