@@ -48,12 +48,6 @@ class MainController extends jfxf.Initializable {
       playerAResult.setText(newVal._1.toString)
       playerBResult.setText(newVal._2.toString)
     })
-
-    val playera = new HumanPlayer
-    val playerb = new HumanPlayer
-
-    Game(10, 10, playera, playerb)
-
   }
 
   protected def mouseClicked(event: MouseEvent): Unit = {
@@ -85,6 +79,11 @@ class MainController extends jfxf.Initializable {
   def addDot(dot: Dot): Unit = {
     board.drawDot(new DotView(dot.point.row, dot.point.column, PlayerView.color(dot.player)))
   }
+
+  def setBoardSize(rows: Int, columns : Int): Unit ={
+    board.setRows(rows)
+    board.setColumns(columns)
+  }
 }
 
 object MainController {
@@ -95,6 +94,9 @@ object MainController {
     delegate = controller
   }
 
+  def setBoardSize(rows: Int, columns : Int): Unit ={
+    delegate.setBoardSize(rows, columns)
+  }
 
   def connectDots(dots: Seq[Dot]): Unit = {
     if (delegate != null) {
