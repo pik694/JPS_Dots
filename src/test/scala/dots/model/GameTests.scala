@@ -11,14 +11,13 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
   "Newly created game" should "be an empty game" in {
 
     Given("Empty game")
-    val game = new Game()
-    val playerA = new HumanPlayer(Color.White)
-    val playerB = new ComputerPlayer(Color.Black)
-    game.startGame(2, 2, playerA, playerB)
+    val playerA = new HumanPlayer
+    val playerB = new ComputerPlayer
+    val game = new Game(2,2,playerA, playerB)
 
     Then( "Board should be empty")
-    game.playerA() should be theSameInstanceAs playerA
-    game.playerB() should be theSameInstanceAs playerB
+    game.playerA should be theSameInstanceAs playerA
+    game.playerB should be theSameInstanceAs playerB
     game.matrix should have length 2
     game.matrix(0) should have length 2
     for (i <- 0 until game.matrix.length)
@@ -29,10 +28,9 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
   it should "enable player to move on an empty dot" in {
 
     Given("Empty game")
-    val game = new Game()
-    val playerA = new HumanPlayer(Color.White)
-    val playerB = new ComputerPlayer(Color.Black)
-    game.startGame(2, 2, playerA, playerB)
+    val playerA = new HumanPlayer
+    val playerB = new ComputerPlayer
+    val game = new Game(2, 2, playerA, playerB)
 
     When("PlayerA wanna move on an empty dot")
     val dot = new Dot(Point(0,0), playerA)
@@ -46,10 +44,10 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
   it should "permit player to move on a non-empty dot" in {
 
     Given("Game with non-empty dot")
-    val game = new Game()
-    val playerA = new HumanPlayer(Color.White)
-    val playerB = new ComputerPlayer(Color.Black)
-    game.startGame(2, 2, playerA, playerB)
+    val playerA = new HumanPlayer
+    val playerB = new ComputerPlayer
+    val game = new Game(2, 2, playerA, playerB)
+
     game.move(Dot(Point(0,0),playerA))
 
     When("Player wanna move on a non-empty dot")

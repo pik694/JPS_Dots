@@ -4,7 +4,8 @@ import java.net.URL
 import java.util
 
 import dots.controls.DotView
-import dots.model.Dot
+import dots.model.player.HumanPlayer
+import dots.model.{Dot, Game}
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
 import scalafx.scene.paint.Color
@@ -31,6 +32,8 @@ class MainController extends jfxf.Initializable {
 //    playerBText.setFill(playerBColor)
 
     playerAText.setUnderline(true)
+
+    Game(2, 2, new HumanPlayer, new HumanPlayer)
 
     board.drawDot(new DotView(1,2,Color.Red))
 
