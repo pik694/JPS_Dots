@@ -24,6 +24,9 @@ class MainController extends jfxf.Initializable {
   @jfxf.FXML
   private var playerBResult: jfxt.Text = null
 
+  @jfxf.FXML
+  private var board: dots.controls.BoardControl = null
+
   def initialize(url: URL, rb: util.ResourceBundle) {
     playerAText.setFill(playerAColor)
     playerBText.setFill(playerBColor)

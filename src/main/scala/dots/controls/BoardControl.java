@@ -8,24 +8,48 @@ import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
-public class BoardView extends Pane {
-    public BoardView() {
+public class BoardControl extends Pane {
+
+    public BoardControl() {
 
         rows.addListener((observable, oldValue, newValue) -> {
             this.getChildren().removeAll(rowLines);
+            this.rowLines.clear();
             this.generateRows(newValue.intValue());
         });
 
         columns.addListener((arg, oldVal, newVal) -> {
             this.getChildren().removeAll(columnLines);
+            this.columnLines.clear();
             this.generateColumns(newVal.intValue());
         });
 
-        generateColumns(columns.get());
-        generateRows(rows.get());
+        heightProperty().addListener(observable -> {
+            for (int i = 0; i < rowLines.size(); ++i) {
+                Line line = rowLines.get(i);
+                double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (i + 1);
+                line.startYProperty().set(y);
+                line.endYProperty().set(y);
+            }
+            for (Line line : columnLines) line.endYProperty().set(heightProperty().doubleValue());
+
+        });
+
+        widthProperty().addListener((observable -> {
+            for (int i = 0; i < columnLines.size(); ++i) {
+                Line line = columnLines.get(i);
+                double x = widthProperty().doubleValue() / (columnLines.size() + 1) * (i + 1);
+
+                line.startXProperty().set(x);
+                line.endXProperty().set(x);
+            }
+
+            for (Line line : rowLines) line.endXProperty().set(widthProperty().doubleValue());
+        }));
+
     }
 
-    public BoardView(Node... children) {
+    public BoardControl(Node... children) {
         super(children);
         rows.addListener((observable, oldValue, newValue) -> {
             this.getChildren().removeAll(rowLines);
@@ -36,10 +60,6 @@ public class BoardView extends Pane {
             this.getChildren().removeAll(columnLines);
             this.generateColumns(newVal.intValue());
         });
-
-        generateColumns(columns.get());
-        generateRows(rows.get());
-
     }
 
     private IntegerProperty rows = new SimpleIntegerProperty();
@@ -75,6 +95,10 @@ public class BoardView extends Pane {
     private void generateRows(Integer rows) {
         for (int i = 0; i < rows; ++i) {
             Line line = new Line();
+
+            this.rowLines.add(line);
+            this.getChildren().add(line);
+
             line.setStrokeWidth(2);
 
             double y = heightProperty().doubleValue() / rows * i;
@@ -85,8 +109,6 @@ public class BoardView extends Pane {
             line.startXProperty().set(0);
             line.endXProperty().set(widthProperty().doubleValue());
 
-            this.rowLines.add(line);
-            this.getChildren().add(line);
         }
     }
 
@@ -94,6 +116,9 @@ public class BoardView extends Pane {
 
         for (int i = 0; i < columns; ++i) {
             Line line = new Line();
+            this.columnLines.add(line);
+            this.getChildren().add(line);
+
             line.setStrokeWidth(2);
 
             double x = widthProperty().doubleValue() / columns * i;
@@ -103,9 +128,6 @@ public class BoardView extends Pane {
 
             line.startYProperty().set(0);
             line.endYProperty().set(heightProperty().doubleValue());
-
-            this.columnLines.add(line);
-            this.getChildren().add(line);
 
         }
 
