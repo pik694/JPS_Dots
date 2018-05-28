@@ -8,7 +8,6 @@ import dots.model.player.HumanPlayer
 import dots.model.{Dot, Game}
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
-import scalafx.scene.paint.Color
 
 class MainController extends jfxf.Initializable {
 
@@ -27,7 +26,10 @@ class MainController extends jfxf.Initializable {
   @jfxf.FXML
   private var board: dots.controls.BoardControl = null
 
-  def initialize(url: URL, rb: util.ResourceBundle) {
+  protected def initialize(url: URL, rb: util.ResourceBundle) {
+
+    MainController(this)
+
     Game.playerA.onChange((_, _, newVal) => {
       playerAText.setFill(PlayerView.color(newVal))
     })
@@ -46,8 +48,6 @@ class MainController extends jfxf.Initializable {
 
     Game(10, 10, new HumanPlayer, new HumanPlayer)
 
-
-
   }
 
   def connectDots(dots: Seq[Dot]) {
@@ -57,4 +57,23 @@ class MainController extends jfxf.Initializable {
   def addDot(dot: Dot): Unit = {
     board.drawDot(new DotView(dot.point.row, dot.point.column, PlayerView.color(dot.player)))
   }
+}
+
+object MainController {
+
+  private var delegate: MainController = null
+
+  def apply(controller: MainController): Unit = {
+    delegate = controller
+  }
+
+
+  def connectDots(dots: Seq[Dot]): Unit = {
+    delegate.connectDots(dots)
+  }
+
+  def addDot(dot: Dot): Unit = {
+    delegate.addDot(dot)
+  }
+
 }

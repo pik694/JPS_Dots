@@ -1,8 +1,7 @@
 package dots.model.player
 
 import dots.model.{Dot, Game, Point}
-import org.scalatest.{FlatSpec, FunSpec, GivenWhenThen, Matchers}
-import scalafx.scene.paint.Color
+import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 
 class GameTests extends FlatSpec with Matchers with GivenWhenThen {
 
@@ -13,9 +12,9 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
     Given("Empty game")
     val playerA = new HumanPlayer
     val playerB = new ComputerPlayer
-    val game = new Game(2,2,playerA, playerB)
+    val game = new Game(2, 2, playerA, playerB)
 
-    Then( "Board should be empty")
+    Then("Board should be empty")
     game.playerA should be theSameInstanceAs playerA
     game.playerB should be theSameInstanceAs playerB
     game.matrix should have length 2
@@ -33,9 +32,9 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
     val game = new Game(2, 2, playerA, playerB)
 
     When("PlayerA wanna move on an empty dot")
-    val dot = new Dot(Point(0,0), playerA)
+    val dot = new Dot(Point(0, 0), playerA)
 
-    Then( "PlayerA is on en empty dot")
+    Then("PlayerA is on en empty dot")
     assert(game.canMove(dot))
     game.move(dot)
     game.matrix(dot.point.row)(dot.point.column) should be theSameInstanceAs playerA
@@ -48,16 +47,16 @@ class GameTests extends FlatSpec with Matchers with GivenWhenThen {
     val playerB = new ComputerPlayer
     val game = new Game(2, 2, playerA, playerB)
 
-    game.move(Dot(Point(0,0),playerA))
+    game.move(Dot(Point(0, 0), playerA))
 
     When("Player wanna move on a non-empty dot")
-    val dot = new Dot(Point(0,0),playerB)
+    val dot = new Dot(Point(0, 0), playerB)
 
-    Then( "Movement is permitted")
+    Then("Movement is permitted")
     assert(!game.canMove(dot))
     game.move(dot)
 
-    And( "On non-empty dot is right player")
+    And("On non-empty dot is right player")
     game.matrix(dot.point.row)(dot.point.column) should be theSameInstanceAs playerA
   }
 }
