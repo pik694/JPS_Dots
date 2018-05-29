@@ -53,7 +53,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make first move")
 
-    val finalState = game.move(initState, Dot(playerA.makeMove(), playerA))
+    val finalState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
 
     Then("board is not empty")
 
@@ -77,7 +77,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerB wants to make first move")
 
-    val finalState = game.move(initState, Dot(playerB.makeMove(), playerB))
+    val finalState = game.move(initState, Dot(playerB.makeMove(initState), playerB))
 
     Then("state should remain unchanged")
 
@@ -93,7 +93,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make invalid move")
 
-    var state = game.move(initState, Dot(playerA.makeMove(), playerA))
+    var state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
 
     Then("state should remain unchanged")
 
@@ -101,7 +101,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(), playerA))
+    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
 
     Then("state should remain unchanged")
 
@@ -109,14 +109,14 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(), playerA))
+    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
 
     Then("state should remain unchanged")
 
     state should equal(initState)
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(), playerA))
+    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
 
     Then("state should remain unchanged")
 
@@ -134,8 +134,8 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make first move")
 
-    val tmpState = game.move(initState, Dot(playerA.makeMove(), playerA))
-    val finalState = game.move(tmpState, Dot(playerB.makeMove(), playerB))
+    val tmpState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    val finalState = game.move(tmpState, Dot(playerB.makeMove(tmpState), playerB))
 
     Then("board has two dots")
 
@@ -159,8 +159,8 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make first move")
 
-    val tmpState = game.move(initState, Dot(playerA.makeMove(), playerA))
-    val finalState = game.move(tmpState, Dot(playerA.makeMove(), playerA))
+    val tmpState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    val finalState = game.move(tmpState, Dot(playerA.makeMove(tmpState), playerA))
 
     Then("board has one dot")
 

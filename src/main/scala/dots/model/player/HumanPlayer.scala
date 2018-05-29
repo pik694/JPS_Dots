@@ -1,5 +1,6 @@
 package dots.model.player
 
+import dots.model.utils.game.GameState
 import dots.model.{Dot, Game, Point}
 
 
@@ -8,7 +9,7 @@ class HumanPlayer extends Player {
     Game.move(Dot(point, this))
   }
 
-  override def makeMove(): Point = {
+  override def makeMove(gameState: GameState): Point = {
     null
   }
 
