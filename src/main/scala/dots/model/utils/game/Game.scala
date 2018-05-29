@@ -1,9 +1,11 @@
-package dots.model.game
+package dots.model.utils.game
 
 import dots.controllers.MainController
-import dots.model.Dot
 import dots.model.player.Player
+import dots.model.utils.Hull
+import dots.model.{Dot, MapDot, Point}
 
+import scala.collection.immutable.HashMap
 
 private[model] class Game(
                            private val playerA: Player,
@@ -41,6 +43,27 @@ private[model] class Game(
     val nextPlayer = if (state.nextPlayer == playerA) playerB else playerA
     state.copy(nextPlayer = nextPlayer)
   }
+
+  private[game] def tryFindHull(board: HashMap[Point, MapDot], dot: Dot): Hull = {
+    def getChildren(parents: Seq[Point], point: Point): Seq[Point] = {
+
+      def filter(point: Point): Boolean = {
+        (board(point).player == dot.player
+          && (!parents.contains(point) || (point == parents.last || parents.size > 3)) //to close a hull with a dot inside we need at least 4 points
+          )
+      }
+
+      val tmp = for (deltaColumn <- Seq(-1, 0, 1) if point.column + deltaColumn >= 0 && point.column + deltaColumn < columns;
+                     deltaRow <- Seq(-1, 0, 1) if point.row + deltaRow >= 0 && point.row + deltaRow < rows)
+        yield Point(point.row + deltaRow, point.column + deltaColumn)
+
+      for (child <- tmp if filter(child)) yield child
+
+    }
+
+    null
+  }
+
 
   //
   //  private def sortHull(hull: Seq[Dot]): Seq[Dot] = {

@@ -1,4 +1,4 @@
-package dots.model.game
+package dots.model.utils.game
 
 import dots.model.player.Player
 import dots.model.{Dot, MapDot, Point}

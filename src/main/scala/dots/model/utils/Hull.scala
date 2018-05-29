@@ -1,14 +1,14 @@
 package dots.model.utils
 
-import dots.model.Dot
+import dots.model.Point
 
-private[model] case class Hull(dots: Seq[Dot]) {
+private[model] case class Hull(dots: Seq[Point]) {
 
   def isEmpty: Boolean = dots.isEmpty
 
   def nonEmpty: Boolean = dots.nonEmpty
 
-  def head: Dot = {
+  def head: Point = {
     if (isEmpty) return null
     val head :: _ = dots
     head
@@ -20,8 +20,8 @@ private[model] case class Hull(dots: Seq[Dot]) {
     Hull(tail)
   }
 
-  def contains(dot: Dot): Boolean ={
-    dots.contains(dot)
+  def contains(point: Point): Boolean = {
+    dots.contains(point)
   }
 }
 

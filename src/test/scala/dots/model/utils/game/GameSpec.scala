@@ -1,8 +1,10 @@
-package dots.model.game
+package dots.model.utils.game
 
-import dots.model.{Dot, Point}
 import dots.model.player.{MockPlayer, Player}
+import dots.model.{Dot, MapDot, Point}
 import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
+
+import scala.collection.immutable.HashMap
 
 class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
@@ -31,62 +33,62 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("board should be empty")
 
-    state.board.isEmpty should be (true)
+    state.board.isEmpty should be(true)
 
     Then("score should be 0-0")
 
-    state.score should equal ((0,0))
+    state.score should equal((0, 0))
 
     Then("it should not be an end")
 
-    game.isEndOfGame(state) should be (false)
+    game.isEndOfGame(state) should be(false)
 
   }
 
-    it should "accept first valid move" in {
+  it should "accept first valid move" in {
 
-      Given("an empty game")
-      val playerA: Player = new MockPlayer(List(Point(0,0)))
-      val (game, initState) = getGameAndInitialState(playerA = playerA)
+    Given("an empty game")
+    val playerA: Player = new MockPlayer(List(Point(0, 0)))
+    val (game, initState) = getGameAndInitialState(playerA = playerA)
 
-      When("playerA wants to make first move")
+    When("playerA wants to make first move")
 
-      val finalState = game.move(initState, Dot(playerA.makeMove(), playerA))
+    val finalState = game.move(initState, Dot(playerA.makeMove(), playerA))
 
-      Then("board is not empty")
+    Then("board is not empty")
 
-      finalState.board.isEmpty should be (false)
+    finalState.board.isEmpty should be(false)
 
-      Then("result equals to 0")
+    Then("result equals to 0")
 
-      finalState.score should equal((0,0))
+    finalState.score should equal((0, 0))
 
-      Then("next player changes")
+    Then("next player changes")
 
-      finalState.nextPlayer should not equal playerA
+    finalState.nextPlayer should not equal playerA
 
-    }
+  }
 
-    it should "not enable user whose not turn is to move" in {
+  it should "not enable user whose not turn is to move" in {
 
-      Given("an empty game")
-      val playerB: Player = new MockPlayer(List(Point(0,0)))
-      val (game, initState) = getGameAndInitialState(playerB = playerB)
+    Given("an empty game")
+    val playerB: Player = new MockPlayer(List(Point(0, 0)))
+    val (game, initState) = getGameAndInitialState(playerB = playerB)
 
-      When("playerB wants to make first move")
+    When("playerB wants to make first move")
 
-      val finalState = game.move(initState, Dot(playerB.makeMove(), playerB))
+    val finalState = game.move(initState, Dot(playerB.makeMove(), playerB))
 
-      Then("state should remain unchanged")
+    Then("state should remain unchanged")
 
-      finalState should equal (initState)
+    finalState should equal(initState)
 
-    }
+  }
 
   it should "not enable move that is out of bounds" in {
 
     Given("an empty game")
-    val playerA: Player = new MockPlayer(List(Point(-1,0), Point(10, 0), Point(0,-1), Point(0,10)))
+    val playerA: Player = new MockPlayer(List(Point(-1, 0), Point(10, 0), Point(0, -1), Point(0, 10)))
     val (game, initState) = getGameAndInitialState(playerA = playerA)
 
     When("playerA wants to make invalid move")
@@ -95,7 +97,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("state should remain unchanged")
 
-    state should equal (initState)
+    state should equal(initState)
 
     When("playerA wants to make invalid move")
 
@@ -103,7 +105,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("state should remain unchanged")
 
-    state should equal (initState)
+    state should equal(initState)
 
     When("playerA wants to make invalid move")
 
@@ -111,16 +113,132 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("state should remain unchanged")
 
-    state should equal (initState)
+    state should equal(initState)
     When("playerA wants to make invalid move")
 
     state = game.move(initState, Dot(playerA.makeMove(), playerA))
 
     Then("state should remain unchanged")
 
-    state should equal (initState)
+    state should equal(initState)
 
   }
+
+
+  it should "accept two consecutive, valid moves" in {
+
+    Given("an empty game")
+    val playerA: Player = new MockPlayer(List(Point(0, 0)))
+    val playerB: Player = new MockPlayer(List(Point(1, 0)))
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    When("playerA wants to make first move")
+
+    val tmpState = game.move(initState, Dot(playerA.makeMove(), playerA))
+    val finalState = game.move(tmpState, Dot(playerB.makeMove(), playerB))
+
+    Then("board has two dots")
+
+    finalState.board.size should equal(2)
+
+    Then("result equals to 0")
+
+    finalState.score should equal((0, 0))
+
+    Then("next player changes")
+
+    finalState.nextPlayer should equal(playerA)
+
+  }
+
+  it should "not accept two consecutive moves of the same player" in {
+
+    Given("an empty game")
+    val playerA: Player = new MockPlayer(List(Point(0, 0), Point(1, 0)))
+    val (game, initState) = getGameAndInitialState(playerA = playerA)
+
+    When("playerA wants to make first move")
+
+    val tmpState = game.move(initState, Dot(playerA.makeMove(), playerA))
+    val finalState = game.move(tmpState, Dot(playerA.makeMove(), playerA))
+
+    Then("board has one dot")
+
+    finalState.board.size should equal(1)
+
+    Then("result equals to 0")
+
+    finalState.score should equal((0, 0))
+
+    Then("next player changes only once")
+
+    finalState.nextPlayer should not equal (playerA)
+
+  }
+
+  "Algorithm to find hull" should "find simple hull" in {
+
+    Given("New game and prepared board")
+
+    val playerA: Player = new MockPlayer
+    val playerB: Player = new MockPlayer
+
+    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    val initBoard = HashMap[Point, MapDot](
+      Point(0, 1) -> MapDot(playerA),
+      Point(1, 2) -> MapDot(playerA),
+      Point(2, 1) -> MapDot(playerA),
+
+      Point(1, 1) -> MapDot(playerB)
+    )
+
+    When("I try to find a hull created by a missing point")
+
+    val hull = game.tryFindHull(initBoard, Dot(Point(1,0), playerA))
+
+    Then("I should get a hull")
+
+    hull should not be null
+   
+  }
+
+
+
+
+  ignore /*"An attempt to create first hull"*/ should "create first hull and update score" in {
+
+    Given("a game with some dots that do not create a single hull")
+
+    val playerA: Player = new MockPlayer
+    val playerB: Player = new MockPlayer
+
+    val (game, tmpState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    val initBoard = HashMap[Point, MapDot](
+      Point(0, 1) -> MapDot(playerA),
+      Point(1, 2) -> MapDot(playerA),
+      Point(2, 1) -> MapDot(playerA),
+
+      Point(1, 1) -> MapDot(playerB)
+    )
+
+    val initState = tmpState.copy(board = initBoard)
+
+
+    When("I add one missing dot to create a hull")
+
+    val finalState = game.move(initState, Dot(Point(1, 0), playerA))
+
+    Then("the dot was added")
+    finalState.board.size should equal(5)
+
+    Then("score changed")
+
+    finalState.score should equal((1, 0))
+
+  }
+
 
   //  "Simple area" should "close border with one dot inside" in {
   //    Given("Simple area with 3 blue and 1 red dot")

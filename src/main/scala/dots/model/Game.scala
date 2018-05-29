@@ -1,7 +1,7 @@
 package dots.model
 
-import dots.model.game.{Game, GameState}
 import dots.model.player.Player
+import dots.model.utils.game.{Game, GameState}
 import scalafx.beans.property.ObjectProperty
 
 object Game {
