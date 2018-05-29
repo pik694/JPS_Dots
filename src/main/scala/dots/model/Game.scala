@@ -41,6 +41,10 @@ object Game {
 
   def canMove(dot: Dot): Boolean = delegate.canMove(_gameState, dot)
 
+  def getEmptyPlaces(gameState: GameState): Seq[Point] = {
+    delegate.getEmptyPlaces(gameState)
+  }
+
   def move(dot: Dot): Unit = {
     _gameState = delegate.move(_gameState, dot)
     _score() = _gameState.score

@@ -30,6 +30,19 @@ private[model] class Game(
   }
 
 
+  def getEmptyPlaces(gameState: GameState): Seq[Point] = {
+
+    val tmpPoints: Seq[Point] = for( i <- 0 to rows;
+                         j <- 0 to columns )
+                         yield Point(i,j)
+
+    def emptyPlacesFilter(point: Point): Boolean = {
+      !gameState.board.contains(point)
+    }
+
+    tmpPoints.filter(emptyPlacesFilter)
+  }
+
   def move(gameState: GameState, dot: Dot): GameState = {
     if (canMove(gameState, dot)) {
       MainController.addDot(dot)
