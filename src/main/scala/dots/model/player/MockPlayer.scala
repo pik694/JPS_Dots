@@ -11,4 +11,10 @@ private[model] class MockPlayer(private var dots: List[Point]) extends Player {
     dots = dots.tail
     head
   }
+
+  def makeMove: Point = {
+    val head = dots.head
+    dots = dots.tail
+    head
+  }
 }

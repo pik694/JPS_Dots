@@ -48,12 +48,12 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
   it should "accept first valid move" in {
 
     Given("an empty game")
-    val playerA: Player = new MockPlayer(List(Point(0, 0)))
+    val playerA: MockPlayer = new MockPlayer(List(Point(0, 0)))
     val (game, initState) = getGameAndInitialState(playerA = playerA)
 
     When("playerA wants to make first move")
 
-    val finalState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    val finalState = game.move(initState, Dot(playerA.makeMove, playerA))
 
     Then("board is not empty")
 
@@ -72,12 +72,12 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
   it should "not enable user whose not turn is to move" in {
 
     Given("an empty game")
-    val playerB: Player = new MockPlayer(List(Point(0, 0)))
+    val playerB: MockPlayer = new MockPlayer(List(Point(0, 0)))
     val (game, initState) = getGameAndInitialState(playerB = playerB)
 
     When("playerB wants to make first move")
 
-    val finalState = game.move(initState, Dot(playerB.makeMove(initState), playerB))
+    val finalState = game.move(initState, Dot(playerB.makeMove, playerB))
 
     Then("state should remain unchanged")
 
@@ -88,12 +88,12 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
   it should "not enable move that is out of bounds" in {
 
     Given("an empty game")
-    val playerA: Player = new MockPlayer(List(Point(-1, 0), Point(10, 0), Point(0, -1), Point(0, 10)))
+    val playerA: MockPlayer = new MockPlayer(List(Point(-1, 0), Point(10, 0), Point(0, -1), Point(0, 10)))
     val (game, initState) = getGameAndInitialState(playerA = playerA)
 
     When("playerA wants to make invalid move")
 
-    var state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    var state = game.move(initState, Dot(playerA.makeMove, playerA))
 
     Then("state should remain unchanged")
 
@@ -101,7 +101,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    state = game.move(initState, Dot(playerA.makeMove, playerA))
 
     Then("state should remain unchanged")
 
@@ -109,14 +109,14 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    state = game.move(initState, Dot(playerA.makeMove, playerA))
 
     Then("state should remain unchanged")
 
     state should equal(initState)
     When("playerA wants to make invalid move")
 
-    state = game.move(initState, Dot(playerA.makeMove(initState), playerA))
+    state = game.move(initState, Dot(playerA.makeMove, playerA))
 
     Then("state should remain unchanged")
 
@@ -128,14 +128,14 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
   it should "accept two consecutive, valid moves" in {
 
     Given("an empty game")
-    val playerA: Player = new MockPlayer(List(Point(0, 0)))
-    val playerB: Player = new MockPlayer(List(Point(1, 0)))
+    val playerA: MockPlayer = new MockPlayer(List(Point(0, 0)))
+    val playerB: MockPlayer = new MockPlayer(List(Point(1, 0)))
     val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     When("playerA wants to make first move")
 
-    val tmpState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
-    val finalState = game.move(tmpState, Dot(playerB.makeMove(tmpState), playerB))
+    val tmpState = game.move(initState, Dot(playerA.makeMove, playerA))
+    val finalState = game.move(tmpState, Dot(playerB.makeMove, playerB))
 
     Then("board has two dots")
 
@@ -154,13 +154,13 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
   it should "not accept two consecutive moves of the same player" in {
 
     Given("an empty game")
-    val playerA: Player = new MockPlayer(List(Point(0, 0), Point(1, 0)))
+    val playerA: MockPlayer = new MockPlayer(List(Point(0, 0), Point(1, 0)))
     val (game, initState) = getGameAndInitialState(playerA = playerA)
 
     When("playerA wants to make first move")
 
-    val tmpState = game.move(initState, Dot(playerA.makeMove(initState), playerA))
-    val finalState = game.move(tmpState, Dot(playerA.makeMove(tmpState), playerA))
+    val tmpState = game.move(initState, Dot(playerA.makeMove, playerA))
+    val finalState = game.move(tmpState, Dot(playerA.makeMove, playerA))
 
     Then("board has one dot")
 
@@ -180,8 +180,8 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Given("New game and prepared board")
 
-    val playerA: Player = new MockPlayer
-    val playerB: Player = new MockPlayer
+    val playerA: MockPlayer = new MockPlayer
+    val playerB: MockPlayer = new MockPlayer
 
     val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
@@ -210,8 +210,8 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Given("a game with some dots that do not create a single hull")
 
-    val playerA: Player = new MockPlayer
-    val playerB: Player = new MockPlayer
+    val playerA: MockPlayer = new MockPlayer
+    val playerB: MockPlayer = new MockPlayer
 
     val (game, tmpState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
