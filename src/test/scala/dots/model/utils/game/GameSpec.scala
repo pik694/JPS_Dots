@@ -195,15 +195,108 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("I try to find a hull created by a missing point")
 
-    val hull = game.tryFindHull(initBoard, Dot(Point(1,0), playerA))
+    val missingPoint = Point(1, 0)
+
+    val finalBoard = initBoard + (missingPoint -> MapDot(playerA))
+
+    val hull = game.tryFindHull(finalBoard, Dot(missingPoint, playerA))
 
     Then("I should get a hull")
 
     hull should not be null
-   
+
+  }
+  it should "not find a hull when there is none" in {
+
+    Given("New game and prepared board")
+
+    val playerA: MockPlayer = new MockPlayer
+    val playerB: MockPlayer = new MockPlayer
+
+    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    val initBoard = HashMap[Point, MapDot](
+      Point(0, 1) -> MapDot(playerA),
+      Point(1, 2) -> MapDot(playerA),
+      Point(2, 1) -> MapDot(playerA),
+
+      Point(1, 1) -> MapDot(playerB)
+    )
+
+    When("I try to find a hull created by a point")
+
+    val point = Point(2, 0)
+
+    val finalBoard = initBoard + (point -> MapDot(playerA))
+
+    val hull = game.tryFindHull(finalBoard, Dot(point, playerA))
+
+    Then("I should not get a hull")
+
+    hull should be (null)
+
   }
 
+  it should "not find a hull when one of the points is claimed by the opponent" in {
 
+    Given("New game and prepared board")
+
+    val playerA: MockPlayer = new MockPlayer
+    val playerB: MockPlayer = new MockPlayer
+
+    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    val initBoard = HashMap[Point, MapDot](
+      Point(0, 1) -> MapDot(playerA),
+      Point(1, 2) -> MapDot(playerA, -1),
+      Point(2, 1) -> MapDot(playerA),
+
+      Point(1, 1) -> MapDot(playerB)
+    )
+
+    When("I try to find a hull created by a point")
+
+    val point = Point(1, 0)
+
+    val finalBoard = initBoard + (point -> MapDot(playerA))
+
+    val hull = game.tryFindHull(finalBoard, Dot(point, playerA))
+
+    Then("I should not get a hull")
+
+    hull should be (null)
+
+  }
+
+  "Points counter" should "count one dot when created simple hull"  in {
+    Given("new game, prepared board and a hull")
+
+    val playerA: MockPlayer = new MockPlayer
+    val playerB: MockPlayer = new MockPlayer
+
+    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    val initBoard = HashMap[Point, MapDot](
+
+      Point(0, 1) -> MapDot(playerA),
+      Point(1, 0) -> MapDot(playerA),
+      Point(1, 2) -> MapDot(playerA),
+      Point(2, 1) -> MapDot(playerA),
+
+      Point(1, 1) -> MapDot(playerB)
+    )
+
+    val hull = game.tryFindHull(initBoard, Dot(Point(0,1), playerA))
+
+    When("I try to count score")
+
+    val score = game.countPoints(initBoard, hull)
+
+    Then ("score should be 1-0")
+
+    score should be ((1,0))
+
+  }
 
 
   ignore /*"An attempt to create first hull"*/ should "create first hull and update score" in {

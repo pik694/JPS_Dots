@@ -46,6 +46,13 @@ private[model] class Game(
   def move(gameState: GameState, dot: Dot): GameState = {
     if (canMove(gameState, dot)) {
       MainController.addDot(dot)
+
+      val hull = tryFindHull(gameState.board, dot)
+
+      if (hull != null){
+
+      }
+
       return nextMove(gameState + dot)
     }
 
@@ -57,12 +64,20 @@ private[model] class Game(
     state.copy(nextPlayer = nextPlayer)
   }
 
+  private[game] def countPoints(board: HashMap[Point, MapDot], hull: Hull): (Int, Int) = {
+
+    (1,0)
+  }
+
   private[game] def tryFindHull(board: HashMap[Point, MapDot], dot: Dot): Hull = {
+
     def getChildren(parents: Seq[Point], point: Point): Seq[Point] = {
 
       def filter(point: Point): Boolean = {
-        (board(point).player == dot.player
-          && (!parents.contains(point) || (point == parents.last || parents.size > 3)) //to close a hull with a dot inside we need at least 4 points
+        (board.contains(point)
+          && board(point).player == dot.player
+          && board(point).value >= 0
+          && (!parents.contains(point) || (point == parents.last && parents.size > 2)) //to close a hull with a dot inside we need at least 4 points
           )
       }
 
@@ -74,83 +89,43 @@ private[model] class Game(
 
     }
 
-    null
+    def foreachChild(parents: Seq[Point], children: Seq[Point]): Hull = {
+      children match {
+        case Nil => null
+        case head :: tail => {
+          val hull = findHull(head +: parents)
+          if (hull == null)
+            foreachChild(parents, tail)
+          else
+            hull
+        }
+      }
+    }
+
+    def findHull(parents: Seq[Point]): Hull = {
+
+      val current = parents.head
+      val children = getChildren(parents, current)
+
+      if (children.isEmpty) return null
+
+      if (children.contains(dot.point)) {
+        val hull = Hull(parents)
+        if (countPoints(board, hull) != (0, 0)) hull else null
+      }
+      else
+        foreachChild(parents, children)
+
+    }
+
+    findHull(Seq(dot.point))
+
   }
 
-
-  //
-  //  private def sortHull(hull: Seq[Dot]): Seq[Dot] = {
-  //    hull
-  //  }
   //  private def countPoints(hull: Seq[Dot]): Int = {
-  //    val sortedHull = sortHull(hull)
   //    1
   //  }
 
-  //  private def getChildren(dot: Dot, parents: Seq[Dot]): Seq[Dot] = {
-  //
-  //    //TODO: risky code by Bidzyyys xD
-  //    def getNeighbour(dot: Dot, row_diff: Int, col_diff: Int): Dot = {
-  //      if (dot.point.row + row_diff >= _matrix.length || dot.point.row + row_diff < 0 ||
-  //      dot.point.column + col_diff >= matrix(0).length || dot.point.column + col_diff < 0)
-  //      Dot(Point(-1, -1), null)
-  //      else
-  //      Dot(Point(dot.point.row + row_diff, dot.point.column + col_diff), _matrix(dot.point.row + row_diff)(dot.point.column + col_diff))
-  //    }
-  //
-  //    def cus_filter(dot: Dot, player: Player): Boolean = {
-  //      dot.player == player && (!parents.contains(dot) || (dot == parents.last && parents.size > 2))
-  //    }
-  //
-  //    val tmpSeq = Seq[Dot](getNeighbour(dot, -1, -1), getNeighbour(dot, -1, 0), getNeighbour(dot, -1, 1),
-  //    getNeighbour(dot, 1, 1), getNeighbour(dot, 1, 0), getNeighbour(dot, 1, -1),
-  //    getNeighbour(dot, 0, 1), getNeighbour(dot, 0, 1))
-  //
-  //    tmpSeq.filter(cus_filter(_, dot.player))
-  //  }
-  //
-  //  def findHull(start: Dot): (Seq[Dot], Int) = {
-  //
-  //    def foreachChild(hull: Seq[Dot], children: Seq[Dot]): (Seq[Dot], Int) = {
-  //      children match {
-  //        case Nil => (Seq.empty,0)
-  //        case head :: tail => {
-  //          val (tmp: Seq[Dot], result: Int) = findHull(head +: hull)
-  //          if (tmp.isEmpty || result == 0) {
-  //            foreachChild(hull, tail)
-  //          }
-  //          else
-  //          (tmp, result)
-  //        }
-  //      }
-  //    }
-  //
-  //    def findHull(hull: Seq[Dot]):  (Seq[Dot], Int) = {
-  //
-  //      val current :: tail = hull
-  //      val children = getChildren(current, hull)
-  //
-  //      if (children.isEmpty) {
-  //        (Seq.empty, 0)
-  //      }
-  //      else if (children.contains(start)) {
-  //        val result = countPoints(hull)
-  //        if (result > 0){
-  //          (hull, result)
-  //        }
-  //        else (Seq.empty, 0)
-  //      }
-  //      else {
-  //        foreachChild(hull, children)
-  //      }
-  //    }
-  //
-  //    findHull(Seq(start))
-  //
-  //  }
-  //
-  //
-  //
   //  private def applyHull(hull: Seq[Dot]) = {
   //    // TODO
   //  }
