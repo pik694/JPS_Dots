@@ -4,15 +4,14 @@ import java.net.URL
 import java.util
 
 import dots.controls.{DotView, PlayerView}
-import dots.model.player.HumanPlayer
-import dots.model.{Dot, Game, Point}
+import dots.model.{Dot, Game}
 import javafx.scene.input.MouseEvent
 import javafx.scene.{text => jfxt}
 import javafx.{fxml => jfxf}
 
 import scala.annotation.tailrec
 
-class MainController extends jfxf.Initializable {
+private[controllers] class MainController extends jfxf.Initializable {
 
   @jfxf.FXML
   private var playerAText: jfxt.Text = null
