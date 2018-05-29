@@ -42,11 +42,11 @@ class HullSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     val dot = Dot(Point(0,0), null)
 
-    val hull = Hull(Seq(dot))
+    val hull = Hull(Seq(dot.point))
 
     Then("Its head should not be empty")
 
-    hull.head should be (dot)
+    hull.head should be (dot.point)
 
     Then("Its tail should be empty")
 
@@ -59,11 +59,11 @@ class HullSpec extends FlatSpec with Matchers with GivenWhenThen {
     Given("Hull with multiple elements")
 
     val dot = Dot(Point(0,0), null)
-    val hull = Hull(Seq(dot, dot, dot))
+    val hull = Hull(Seq(dot.point, dot.point, dot.point))
 
     Then("Head should be a valid dot")
 
-    hull.head should be (dot)
+    hull.head should be (dot.point)
 
     When("I get hull's tail")
 
