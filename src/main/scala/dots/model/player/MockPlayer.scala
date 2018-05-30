@@ -13,6 +13,7 @@ private[model] class MockPlayer(private var dots: List[Point]) extends Player {
   }
 
   def makeMove: Point = {
+    if (dots.isEmpty) return null
     val head = dots.head
     dots = dots.tail
     head

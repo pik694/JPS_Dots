@@ -4,26 +4,33 @@ import dots.model.player.{MockPlayer, Player}
 import dots.model.{Dot, DotState, MapDot, Point}
 import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 
+import scala.annotation.tailrec
 import scala.collection.immutable.HashMap
 
 class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
   final def getGameAndInitialState(playerA: Player = new MockPlayer, playerB: Player = new MockPlayer()): (Game, GameState) = {
-    val game = new Game(playerA, playerB, 3, 3)
+    val game = new Game(playerA, playerB, 10, 10)
     (game, GameState(nextPlayer = playerA))
   }
 
-  //    @tailrec
-  //  final def addPoints(game: Game, dots: Seq[Dot]): Game ={
-  //    dots match {
-  //      case Nil => game
-  //      case head :: tail =>{
-  //        game.matrix(head.point.row)(head.point.column) = head.player
-  //        addPoints(game, tail)
-  //      }
-  //    }
-  //  }
-  //
+  final def makeMoves(playerA: MockPlayer, playerB: MockPlayer, game: Game, gameState: GameState) : GameState = {
+
+    @tailrec
+    def makeRound(gameState: GameState): GameState ={
+      val playerAMove = playerA.makeMove
+      val playerBMove = playerB.makeMove
+      if (playerAMove == null) gameState
+      else {
+        val tmpState = game.move(gameState, Dot(playerAMove, playerA))
+        if (playerBMove == null) tmpState
+        else makeRound(game.move(tmpState, Dot(playerBMove, playerB)))
+      }
+    }
+
+    makeRound(gameState)
+
+  }
 
   "Newly created game" should "have be initialised" in {
 
@@ -340,6 +347,115 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     Then("score changed")
 
     finalState.score should equal((1, 0))
+
+  }
+
+  "Some game" should "accept a sequence of moves" in {
+
+    Given("new game, players and their moves")
+
+    val playerAMoves = List(
+      Point(0,0)
+    )
+
+    val playerBMoves = List(
+      Point(1,0)
+    )
+
+    val playerA: MockPlayer = new MockPlayer(playerAMoves)
+    val playerB: MockPlayer = new MockPlayer(playerBMoves)
+
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    When(" players make their moves")
+
+    val finalState = makeMoves(playerA, playerB, game, initState)
+
+    Then("board should contain all moves")
+    finalState.board.size should equal(playerAMoves.size + playerBMoves.size)
+
+    Then("score did not change")
+
+    finalState.score should equal((0, 0))
+
+  }
+
+  it should "accept a sequence of moves and find a simple hull" in {
+
+    Given("new game, players and their moves")
+
+    val playerAMoves = List(
+      Point(0,1),
+      Point(1,2),
+      Point(2,1),
+      Point(1,0)
+    )
+
+    val playerBMoves = List(
+      Point(1,1),
+      Point(0,9),
+      Point(0,8)
+    )
+
+    val playerA: MockPlayer = new MockPlayer(playerAMoves)
+    val playerB: MockPlayer = new MockPlayer(playerBMoves)
+
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    When(" players make their moves")
+
+    val finalState = makeMoves(playerA, playerB, game, initState)
+
+    Then("board should contain all moves")
+    finalState.board.size should equal(playerAMoves.size + playerBMoves.size)
+
+    Then("score did not change")
+
+    finalState.score should equal((1, 0))
+
+  }
+
+  it should "accept a sequence of moves and find a hull with two dots inside" in {
+
+    Given("new game, players and their moves")
+
+    //TODO: add missing points to this case
+    val playerAMoves = List(
+      Point(0,0),
+      Point(1,0),
+      Point(2,0),
+      Point(0,1),
+      Point(0,2),
+      Point(1,2),
+      Point(2,2),
+      Point(3,1)
+    )
+
+    val playerBMoves = List(
+      Point(1,1),
+      Point(2,1),
+      Point(0,9),
+      Point(0,8),
+      Point(0,7),
+      Point(0,6),
+      Point(0,5)
+    )
+
+    val playerA: MockPlayer = new MockPlayer(playerAMoves)
+    val playerB: MockPlayer = new MockPlayer(playerBMoves)
+
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+
+    When(" players make their moves")
+
+    val finalState = makeMoves(playerA, playerB, game, initState)
+
+    Then("board should contain all moves")
+    finalState.board.size should equal(playerAMoves.size + playerBMoves.size)
+
+    Then("score did not change")
+
+    finalState.score should equal((2, 0))
 
   }
 

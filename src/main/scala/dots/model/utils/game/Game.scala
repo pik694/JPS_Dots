@@ -218,6 +218,9 @@ private[model] class Game(
 
         val hull = Hull(parents)
         val newBoard = tryApply(board, hull)
+
+        if (newBoard == null) return null
+
         val newScore = countPoints(newBoard)
 
         if (newScore._1 > state.score._1 && state.nextPlayer == playerA || newScore._2 > state.score._2 && state.nextPlayer == playerB)
