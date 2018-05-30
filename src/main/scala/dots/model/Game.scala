@@ -9,7 +9,7 @@ object Game {
   var delegate: Game = null
   private var _gameState: GameState = null
 
-  val initialGameState: GameState = GameState(nextPlayer = _playerA())
+  def initialGameState: GameState = GameState(nextPlayer = _playerA())
 
   private val _playerA = new ObjectProperty[Player]()
   private val _playerB = new ObjectProperty[Player]()
@@ -34,6 +34,8 @@ object Game {
 
     delegate = new Game(playerA, playerB, rows, columns)
     _gameState = initialGameState
+
+    _move() = initialGameState.nextPlayer
 
   }
 

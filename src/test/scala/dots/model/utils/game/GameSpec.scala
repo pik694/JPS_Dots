@@ -9,7 +9,7 @@ import scala.collection.immutable.HashMap
 class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
   final def getGameAndInitialState(playerA: Player = new MockPlayer, playerB: Player = new MockPlayer()): (Game, GameState) = {
-    val game = new Game(playerA, playerB, 10, 10);
+    val game = new Game(playerA, playerB, 3, 3)
     (game, GameState(nextPlayer = playerA))
   }
 
@@ -233,7 +233,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("I should not get a hull")
 
-    hull should be (null)
+    hull should be(null)
 
   }
 
@@ -264,11 +264,11 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("I should not get a hull")
 
-    hull should be (null)
+    hull should be(null)
 
   }
 
-  "Points counter" should "count one dot when created simple hull"  in {
+  "Points counter" should "count one dot when created simple hull" in {
     Given("new game, prepared board and a hull")
 
     val playerA: MockPlayer = new MockPlayer
@@ -286,20 +286,20 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
       Point(1, 1) -> MapDot(playerB)
     )
 
-    val hull = game.tryFindHull(initBoard, Dot(Point(0,1), playerA))
+    val hull = game.tryFindHull(initBoard, Dot(Point(0, 1), playerA))
 
     When("I try to count score")
 
     val score = game.countPoints(initBoard, hull)
 
-    Then ("score should be 1-0")
+    Then("score should be 1-0")
 
-    score should be ((1,0))
+    score should equal((1, -1))
 
   }
 
 
-  ignore /*"An attempt to create first hull"*/ should "create first hull and update score" in {
+  "An attempt to create first hull" should "create first hull and update score" in {
 
     Given("a game with some dots that do not create a single hull")
 
@@ -328,131 +328,8 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("score changed")
 
-    finalState.score should equal((1, 0))
+    finalState.score should equal((1, -1))
 
   }
-
-
-  //  "Simple area" should "close border with one dot inside" in {
-  //    Given("Simple area with 3 blue and 1 red dot")
-  //
-  //    val playerA = new HumanPlayer
-  //    val playerB = new HumanPlayer
-  //
-  //    val dots = Seq(
-  //
-  //      Dot(Point(1,1), playerB),
-  //
-  //      Dot(Point(1,2), playerA),
-  //      Dot(Point(2,1), playerA),
-  //      Dot(Point(1,0), playerA)
-  //    )
-  //
-  //    val game = addPoints(new Game(10, 10, playerA, playerB), dots)
-  //
-  //
-  //    When("I add one missing dot")
-  //
-  //    game.move(Dot(Point(0,1), playerA))
-  //
-  //    Then("Result should be 1-0")
-  //
-  //    assert(game.score() == (1,0))
-  //
-  //  }
-  //
-  //  it should "close border with one dot inside and not include all dots in the hull" in {
-  //    Given("Simple area with 4 blue and 1 red dot")
-  //
-  //    val playerA = new HumanPlayer
-  //    val playerB = new HumanPlayer
-  //
-  //    val dots = Seq(
-  //
-  //      Dot(Point(1,1), playerB),
-  //
-  //      Dot(Point(1,2), playerA),
-  //      Dot(Point(2,1), playerA),
-  //      Dot(Point(3,1), playerA),
-  //      Dot(Point(1,0), playerA)
-  //    )
-  //
-  //    val game = addPoints(new Game(10, 10, playerA, playerB), dots)
-  //
-  //
-  //    When("I add one missing dot")
-  //
-  //    game.move(Dot(Point(0,1), playerA))
-  //
-  //    Then("Result should be 1-0")
-  //
-  //    assert(game.score() == (1,0))
-  //
-  //  }
-  //
-  //
-  //  it should "not close hull as other players dot is already " in {
-  //    Given("Simple area with 4 blue and 1 red dot")
-  //
-  //    val playerA = new HumanPlayer
-  //    val playerB = new HumanPlayer
-  //
-  //    val dots = Seq(
-  //
-  //      Dot(Point(1,1), playerB, -1),
-  //
-  //      Dot(Point(1,2), playerA),
-  //      Dot(Point(2,1), playerA),
-  //      Dot(Point(3,1), playerA),
-  //      Dot(Point(1,0), playerA)
-  //    )
-  //
-  //    val game = addPoints(new Game(10, 10, playerA, playerB), dots)
-  //
-  //
-  //    When("I add one missing dot")
-  //
-  //    game.move(Dot(Point(0,1), playerA))
-  //
-  //    Then("Result should be 1-0")
-  //
-  //    assert(game.score() == (0,0))
-  //
-  //  }
-
-  //  "Given dot" should "should not recognise base" in {
-  //
-  //    Given("Empty game")
-  //    val playerA = new HumanPlayer
-  //    val playerB = new ComputerPlayer
-  //    val game = new Game(2, 2, playerA, playerB)
-  //
-  //    game.move(Dot(Point(0, 0), playerA))
-  //
-  //    When("Player add one dot")
-  //    val dot = new Dot(Point(0, 0), playerB)
-  //    game.move(dot)
-  //
-  //    Then("Closed area should not be found")
-  //    assert(!game.isClosedArea(dot))
-  //  }
-  //
-  //  "Given closed area" should "should find closed area" in {
-  //
-  //    Given("Empty game")
-  //    val playerA = new HumanPlayer
-  //    val playerB = new ComputerPlayer
-  //    val game = new Game(2, 2, playerA, playerB)
-  //
-  //    When("Player add 4 dots")
-  //    game.move(Dot(Point(0, 0), playerA))
-  //    game.move(Dot(Point(1, 0), playerA))
-  //    game.move(Dot(Point(0, 1), playerA))
-  //    game.move(Dot(Point(1, 1), playerA))
-  //
-  //
-  //    Then("Closed area should be recognized")
-  //    assert(game.isClosedArea(Dot(Point(1, 1), playerA)))
-  //  }
 
 }

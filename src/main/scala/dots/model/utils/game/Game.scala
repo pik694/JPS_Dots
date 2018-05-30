@@ -5,6 +5,7 @@ import dots.model.player.Player
 import dots.model.utils.Hull
 import dots.model.{Dot, MapDot, Point}
 
+import scala.annotation.tailrec
 import scala.collection.immutable.HashMap
 
 private[model] class Game(
@@ -32,9 +33,9 @@ private[model] class Game(
 
   def getEmptyPlaces(gameState: GameState): Seq[Point] = {
 
-    val tmpPoints: Seq[Point] = for( i <- 0 to rows;
-                         j <- 0 to columns )
-                         yield Point(i,j)
+    val tmpPoints: Seq[Point] = for (i <- 0 to rows;
+                                     j <- 0 to columns)
+      yield Point(i, j)
 
     def emptyPlacesFilter(point: Point): Boolean = {
       !gameState.board.contains(point)
@@ -46,17 +47,27 @@ private[model] class Game(
   def move(gameState: GameState, dot: Dot): GameState = {
     if (canMove(gameState, dot)) {
       MainController.addDot(dot)
+      var tmpState = gameState + dot
 
-      val hull = tryFindHull(gameState.board, dot)
+      val hull = tryFindHull(tmpState.board, dot)
 
-      if (hull != null){
+      if (hull != null) {
+
+        tmpState = applyHull(tmpState, hull)
 
       }
 
-      return nextMove(gameState + dot)
+      return nextMove(tmpState)
     }
 
     gameState
+  }
+
+  private def isOutOfBounds(point: Point): Boolean = {
+    (point.column < 0
+      || point.column >= columns
+      || point.row < 0
+      || point.row >= rows)
   }
 
   private def nextMove(state: GameState): GameState = {
@@ -66,7 +77,76 @@ private[model] class Game(
 
   private[game] def countPoints(board: HashMap[Point, MapDot], hull: Hull): (Int, Int) = {
 
-    (1,0)
+    val player = board(hull.head).player
+    val head = hull.head
+
+    @tailrec
+    def countPoints(buffer: Set[Point], searched: Set[Point] = Set.empty, result: (Int, Int) = (0, 0)): (Int, Int) = {
+
+      def getChildren(point: Point): Set[Point] = {
+
+        val verticalChildren = for (deltaRow <- Seq(-1, 1)) yield Point(point.row + deltaRow, point.column)
+        val horizontalChildren = for (deltaColumn <- Seq(-1, 1)) yield Point(point.row, point.column + deltaColumn)
+
+        val children = horizontalChildren ++ verticalChildren
+
+        ((children.toSet -- searched) -- buffer) -- hull.dots
+
+      }
+
+
+      if (buffer.isEmpty) return result
+
+      val current = buffer.head
+      if (isOutOfBounds(current)) return (0, 0)
+
+      val children: Set[Point] = getChildren(current)
+
+      val delta: (Int, Int) = if (board.contains(current)) {
+        val dot = board(current)
+        if (dot.player != player && dot.value == 0)
+          (1, -1)
+        else
+          (0, 0)
+      }
+      else
+        (0, 0)
+
+
+      val newResult: (Int, Int) = if (player == playerA)
+        (result._1 + delta._1, result._2 + delta._2)
+      else
+        (result._1 + delta._2, result._2 + delta._1)
+
+      countPoints(buffer.tail ++ children, searched + current, newResult)
+
+    }
+
+    val neighbours = Set(
+      Point(head.row - 1, head.column - 1),
+      Point(head.row - 1, head.column),
+      Point(head.row - 1, head.column + 1),
+      Point(head.row, head.column - 1),
+      Point(head.row, head.column + 1),
+      Point(head.row + 1, head.column - 1),
+      Point(head.row + 1, head.column),
+      Point(head.row + 1, head.column + 1)
+    )
+
+    @tailrec
+    def search(neighbours: Set[Point]): (Int, Int) = {
+
+      if (neighbours.isEmpty) return (0, 0)
+
+      val currentResult = countPoints(Set(neighbours.head))
+
+      if (currentResult != (0, 0)) currentResult
+      else search(neighbours.tail)
+
+    }
+
+    search(neighbours -- hull.dots)
+
   }
 
   private[game] def tryFindHull(board: HashMap[Point, MapDot], dot: Dot): Hull = {
@@ -122,12 +202,15 @@ private[model] class Game(
 
   }
 
-  //  private def countPoints(hull: Seq[Dot]): Int = {
-  //    1
-  //  }
+  private def applyHull(gameState: GameState, hull: Hull): GameState = {
 
-  //  private def applyHull(hull: Seq[Dot]) = {
-  //    // TODO
-  //  }
+    val dots = for (point <- hull.dots) yield Dot(point, gameState.nextPlayer)
+
+    MainController.connectDots(dots)
+
+    GameState(gameState.board, gameState.score, gameState.nextPlayer)
+  }
+
+
 
 }
