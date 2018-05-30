@@ -3,10 +3,10 @@ package dots.model.utils.game
 import dots.controllers.MainController
 import dots.model.player.Player
 import dots.model.utils.Hull
-import dots.model.{Dot, MapDot, Point}
+import dots.model.utils.game.GameState.BoardType
+import dots.model.{Dot, DotState, MapDot, Point}
 
 import scala.annotation.tailrec
-import scala.collection.immutable.HashMap
 
 private[model] class Game(
                            private val playerA: Player,
@@ -47,17 +47,18 @@ private[model] class Game(
   def move(gameState: GameState, dot: Dot): GameState = {
     if (canMove(gameState, dot)) {
       MainController.addDot(dot)
-      var tmpState = gameState + dot
+      var modifiedState = gameState + dot
 
-      val hull = tryFindHull(tmpState.board, dot)
+      val result: (Hull, GameState) = tryFindHull(modifiedState, dot)
 
-      if (hull != null) {
+      if (result != null) {
 
-        tmpState = applyHull(tmpState, hull)
+        modifiedState = result._2
+        applyHull(modifiedState, result._1)
 
       }
 
-      return nextMove(tmpState)
+      return nextMove(modifiedState)
     }
 
     gameState
@@ -75,13 +76,36 @@ private[model] class Game(
     state.copy(nextPlayer = nextPlayer)
   }
 
-  private[game] def countPoints(board: HashMap[Point, MapDot], hull: Hull): (Int, Int) = {
+  private[game] def countPoints(board: BoardType): (Int, Int) = {
+
+    def add(partialSum: (Int, Int), dot: (Point, MapDot)): (Int, Int) = {
+
+      if (dot._2.value == DotState.SELF_SURROUNDED) {
+        if (dot._2.player == playerA)
+          return (partialSum._1 - 1, partialSum._2)
+        else
+          return (partialSum._1, partialSum._2 - 1)
+      }
+      else if (dot._2.value == DotState.OPPONENT_SURROUNDED) {
+        if (dot._2.player == playerA)
+          return (partialSum._1, partialSum._2 + 1)
+        else
+          return (partialSum._1 + 1, partialSum._2)
+      }
+      partialSum
+    }
+
+    board.foldLeft((0, 0))(add)
+
+  }
+
+  private[game] def tryApply(board: BoardType, hull: Hull): BoardType = {
 
     val player = board(hull.head).player
     val head = hull.head
 
     @tailrec
-    def countPoints(buffer: Set[Point], searched: Set[Point] = Set.empty, result: (Int, Int) = (0, 0)): (Int, Int) = {
+    def applyChanges(board: BoardType, buffer: Set[Point], searched: Set[Point] = Set.empty): BoardType = {
 
       def getChildren(point: Point): Set[Point] = {
 
@@ -95,30 +119,25 @@ private[model] class Game(
       }
 
 
-      if (buffer.isEmpty) return result
+      if (buffer.isEmpty) return board
 
       val current = buffer.head
-      if (isOutOfBounds(current)) return (0, 0)
+      if (isOutOfBounds(current)) return null
 
       val children: Set[Point] = getChildren(current)
 
-      val delta: (Int, Int) = if (board.contains(current)) {
+      val modifiedBoard: BoardType = if (board.contains(current)){
         val dot = board(current)
-        if (dot.player != player && dot.value == 0)
-          (1, -1)
-        else
-          (0, 0)
+        if (dot.value == DotState.FREE){
+          if (dot.player == player) board + (current -> dot.copy(value = DotState.SELF_SURROUNDED))
+          else board + (current -> dot.copy(value = DotState.OPPONENT_SURROUNDED))
+        }
+        else board
       }
-      else
-        (0, 0)
+      else board + (current -> MapDot(null, DotState.FREE_SPACE))
 
 
-      val newResult: (Int, Int) = if (player == playerA)
-        (result._1 + delta._1, result._2 + delta._2)
-      else
-        (result._1 + delta._2, result._2 + delta._1)
-
-      countPoints(buffer.tail ++ children, searched + current, newResult)
+      applyChanges(modifiedBoard, buffer.tail ++ children, searched + current)
 
     }
 
@@ -134,13 +153,14 @@ private[model] class Game(
     )
 
     @tailrec
-    def search(neighbours: Set[Point]): (Int, Int) = {
+    def search(neighbours: Set[Point]): BoardType = {
 
-      if (neighbours.isEmpty) return (0, 0)
+      if (neighbours.isEmpty) return null
 
-      val currentResult = countPoints(Set(neighbours.head))
+      val currentResult = applyChanges(board, Set(neighbours.head))
 
-      if (currentResult != (0, 0)) currentResult
+      if (currentResult != null) currentResult
+
       else search(neighbours.tail)
 
     }
@@ -149,14 +169,16 @@ private[model] class Game(
 
   }
 
-  private[game] def tryFindHull(board: HashMap[Point, MapDot], dot: Dot): Hull = {
+  private[game] def tryFindHull(state: GameState, dot: Dot): (Hull, GameState) = {
+
+    val board = state.board
 
     def getChildren(parents: Seq[Point], point: Point): Seq[Point] = {
 
       def filter(point: Point): Boolean = {
         (board.contains(point)
           && board(point).player == dot.player
-          && board(point).value >= 0
+          && board(point).value == DotState.FREE
           && (!parents.contains(point) || (point == parents.last && parents.size > 2)) //to close a hull with a dot inside we need at least 4 points
           )
       }
@@ -169,29 +191,39 @@ private[model] class Game(
 
     }
 
-    def foreachChild(parents: Seq[Point], children: Seq[Point]): Hull = {
+    @tailrec
+    def foreachChild(parents: Seq[Point], children: Seq[Point]): (Hull, GameState) = {
       children match {
         case Nil => null
         case head :: tail => {
-          val hull = findHull(head +: parents)
-          if (hull == null)
+          val update = findHull(head +: parents)
+          if (update == null)
             foreachChild(parents, tail)
           else
-            hull
+            update
         }
       }
     }
 
-    def findHull(parents: Seq[Point]): Hull = {
+
+    def findHull(parents: Seq[Point]): (Hull, GameState) = {
 
       val current = parents.head
       val children = getChildren(parents, current)
 
-      if (children.isEmpty) return null
+      if (children.isEmpty)
+        return null
 
       if (children.contains(dot.point)) {
+
         val hull = Hull(parents)
-        if (countPoints(board, hull) != (0, 0)) hull else null
+        val newBoard = tryApply(board, hull)
+        val newScore = countPoints(newBoard)
+
+        if (newScore._1 > state.score._1 && state.nextPlayer == playerA || newScore._2 > state.score._2 && state.nextPlayer == playerB)
+          (hull, state.copy(board = newBoard, score = newScore))
+        else null
+
       }
       else
         foreachChild(parents, children)
@@ -202,15 +234,12 @@ private[model] class Game(
 
   }
 
-  private def applyHull(gameState: GameState, hull: Hull): GameState = {
+  private def applyHull(gameState: GameState, hull: Hull): Unit= {
 
     val dots = for (point <- hull.dots) yield Dot(point, gameState.nextPlayer)
-
     MainController.connectDots(dots)
 
-    GameState(gameState.board, gameState.score, gameState.nextPlayer)
   }
-
 
 
 }

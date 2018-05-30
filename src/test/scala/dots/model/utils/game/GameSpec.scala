@@ -1,7 +1,7 @@
 package dots.model.utils.game
 
 import dots.model.player.{MockPlayer, Player}
-import dots.model.{Dot, MapDot, Point}
+import dots.model.{Dot, DotState, MapDot, Point}
 import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 
 import scala.collection.immutable.HashMap
@@ -183,7 +183,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val playerA: MockPlayer = new MockPlayer
     val playerB: MockPlayer = new MockPlayer
 
-    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+    val (game, initialState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     val initBoard = HashMap[Point, MapDot](
       Point(0, 1) -> MapDot(playerA),
@@ -197,15 +197,22 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     val missingPoint = Point(1, 0)
 
-    val finalBoard = initBoard + (missingPoint -> MapDot(playerA))
+    val modifiedBoard = initBoard + (missingPoint -> MapDot(playerA))
 
-    val hull = game.tryFindHull(finalBoard, Dot(missingPoint, playerA))
+    val tmpState = initialState.copy(board = modifiedBoard)
+
+    val (hull, finalState) = game.tryFindHull(tmpState, Dot(missingPoint, playerA))
 
     Then("I should get a hull")
 
     hull should not be null
 
+    Then("Final result should be 1-0")
+
+    finalState.score should equal ((1,0))
+
   }
+
   it should "not find a hull when there is none" in {
 
     Given("New game and prepared board")
@@ -213,7 +220,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val playerA: MockPlayer = new MockPlayer
     val playerB: MockPlayer = new MockPlayer
 
-    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+    val (game, initialState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     val initBoard = HashMap[Point, MapDot](
       Point(0, 1) -> MapDot(playerA),
@@ -228,12 +235,13 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val point = Point(2, 0)
 
     val finalBoard = initBoard + (point -> MapDot(playerA))
+    val finalState = initialState.copy(board = finalBoard)
 
-    val hull = game.tryFindHull(finalBoard, Dot(point, playerA))
+    val result = game.tryFindHull(finalState, Dot(point, playerA))
 
-    Then("I should not get a hull")
+    Then("I should not get an update")
 
-    hull should be(null)
+    result should be(null)
 
   }
 
@@ -244,11 +252,11 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val playerA: MockPlayer = new MockPlayer
     val playerB: MockPlayer = new MockPlayer
 
-    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+    val (game, initialState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     val initBoard = HashMap[Point, MapDot](
       Point(0, 1) -> MapDot(playerA),
-      Point(1, 2) -> MapDot(playerA, -1),
+      Point(1, 2) -> MapDot(playerA, DotState.OPPONENT_SURROUNDED),
       Point(2, 1) -> MapDot(playerA),
 
       Point(1, 1) -> MapDot(playerB)
@@ -259,12 +267,13 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val point = Point(1, 0)
 
     val finalBoard = initBoard + (point -> MapDot(playerA))
+    val finalState = initialState.copy(board = finalBoard)
 
-    val hull = game.tryFindHull(finalBoard, Dot(point, playerA))
+    val result = game.tryFindHull(finalState, Dot(point, playerA))
 
-    Then("I should not get a hull")
+    Then("I should not get an update")
 
-    hull should be(null)
+    result should be(null)
 
   }
 
@@ -274,7 +283,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val playerA: MockPlayer = new MockPlayer
     val playerB: MockPlayer = new MockPlayer
 
-    val (game, _) = getGameAndInitialState(playerA = playerA, playerB = playerB)
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     val initBoard = HashMap[Point, MapDot](
 
@@ -286,15 +295,17 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
       Point(1, 1) -> MapDot(playerB)
     )
 
-    val hull = game.tryFindHull(initBoard, Dot(Point(0, 1), playerA))
+    val tmpState = initState.copy(board = initBoard)
+
+    val (_, finalState) = game.tryFindHull(tmpState, Dot(Point(0, 1), playerA))
 
     When("I try to count score")
 
-    val score = game.countPoints(initBoard, hull)
+    val score = game.countPoints(finalState.board)
 
     Then("score should be 1-0")
 
-    score should equal((1, -1))
+    score should equal((1, 0))
 
   }
 
@@ -328,7 +339,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     Then("score changed")
 
-    finalState.score should equal((1, -1))
+    finalState.score should equal((1, 0))
 
   }
 
