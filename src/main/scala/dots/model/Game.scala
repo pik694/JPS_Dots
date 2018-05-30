@@ -4,6 +4,8 @@ import dots.model.player.Player
 import dots.model.utils.game.{Game, GameState}
 import scalafx.beans.property.ObjectProperty
 
+import scala.annotation.tailrec
+
 object Game {
 
   var delegate: Game = null
@@ -37,6 +39,8 @@ object Game {
 
     _move() = initialGameState.nextPlayer
 
+    val computedMove = initialGameState.nextPlayer.makeMove(initialGameState)
+    if (computedMove != null) move(Dot(computedMove, _gameState.nextPlayer))
   }
 
   def isEndOfGame: Boolean = delegate.isEndOfGame(_gameState)
@@ -47,11 +51,16 @@ object Game {
     delegate.getEmptyPlaces(gameState)
   }
 
+  @tailrec
   def move(dot: Dot): Unit = {
     _gameState = delegate.move(_gameState, dot)
     _score() = _gameState.score
     _move() = _gameState.nextPlayer
 
+    if (!delegate.isEndOfGame(_gameState)) {
+      val computedMove = _gameState.nextPlayer.makeMove(_gameState)
+      if (computedMove != null) move(Dot(computedMove, _gameState.nextPlayer))
+    }
   }
 }
 
