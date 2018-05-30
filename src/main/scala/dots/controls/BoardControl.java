@@ -103,7 +103,7 @@ public class BoardControl extends Pane {
         array.add(end);
 
         Line line = new Line();
-        line.setStrokeWidth(2);
+        line.setStrokeWidth(4);
         line.setStroke(color);
 
         this.getChildren().add(line);
