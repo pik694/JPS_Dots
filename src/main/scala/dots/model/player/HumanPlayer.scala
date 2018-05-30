@@ -8,9 +8,4 @@ class HumanPlayer extends Player {
   override def acceptMove(point: Point): Unit = {
     Game.move(Dot(point, this))
   }
-
-  override def makeMove(gameState: GameState): Point = {
-    null
-  }
-
 }
