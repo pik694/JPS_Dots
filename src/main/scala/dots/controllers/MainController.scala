@@ -11,23 +11,31 @@ import javafx.{fxml => jfxf}
 
 import scala.annotation.tailrec
 
+/**
+  * Main controller managing app
+  */
 private[controllers] class MainController extends jfxf.Initializable {
 
   @jfxf.FXML
-  private var playerAText: jfxt.Text = null
+  private var playerAText: jfxt.Text = _
 
   @jfxf.FXML
-  private var playerBText: jfxt.Text = null
+  private var playerBText: jfxt.Text = _
 
   @jfxf.FXML
-  private var playerAResult: jfxt.Text = null
+  private var playerAResult: jfxt.Text = _
 
   @jfxf.FXML
-  private var playerBResult: jfxt.Text = null
+  private var playerBResult: jfxt.Text = _
 
   @jfxf.FXML
-  private var board: dots.controls.BoardControl = null
+  private var board: dots.controls.BoardControl = _
 
+  /**
+    * Initialize app
+    * @param url
+    * @param rb
+    */
   protected def initialize(url: URL, rb: util.ResourceBundle) {
 
     MainController(this)
@@ -49,6 +57,10 @@ private[controllers] class MainController extends jfxf.Initializable {
     })
   }
 
+  /**
+    * Passes mouse event to the model
+    * @param event
+    */
   protected def mouseClicked(event: MouseEvent): Unit = {
 
     val point = board.translate(event)
@@ -59,6 +71,11 @@ private[controllers] class MainController extends jfxf.Initializable {
 
   }
 
+  /**
+    * Function drawing connections between dots
+    * Visualize closed area
+    * @param dots sequence of dots
+    */
   def connectDots(dots: Seq[Dot]) {
     @tailrec
     def drawLines(dots: Seq[Dot]): Dot ={
@@ -75,34 +92,63 @@ private[controllers] class MainController extends jfxf.Initializable {
 
   }
 
+  /**
+    * Function drawing dot on the screen
+    * @param dot to be drawn
+    */
   def addDot(dot: Dot): Unit = {
     board.drawDot(new DotView(dot.point.row, dot.point.column, PlayerView.color(dot.player)))
   }
 
+  /**
+    * Sets board size
+    * @param rows
+    * @param columns
+    */
   def setBoardSize(rows: Int, columns : Int): Unit ={
     board.setRows(rows)
     board.setColumns(columns)
   }
 }
 
+/**
+  * Singleton of Main Controller
+  */
 object MainController {
 
-  private var delegate: MainController = null
+  private var delegate: MainController = _
 
+  /**
+    * Initialize main controller
+    * @param controller
+    */
   def apply(controller: MainController): Unit = {
     delegate = controller
   }
 
+  /**
+    * Calls main controller function setting board size
+    * @param rows
+    * @param columns
+    */
   def setBoardSize(rows: Int, columns : Int): Unit ={
     delegate.setBoardSize(rows, columns)
   }
 
+  /**
+    * Calls main controller function drawing closed area
+    * @param dots sequence of dots to be connected
+    */
   def connectDots(dots: Seq[Dot]): Unit = {
     if (delegate != null) {
       delegate.connectDots(dots)
     }
   }
 
+  /**
+    * Calls main controller function drawing dot
+    * @param dot to be drawn
+    */
   def addDot(dot: Dot): Unit = {
     if (delegate != null) {
       delegate.addDot(dot)

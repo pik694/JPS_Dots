@@ -10,8 +10,8 @@ class ComputerPlayer extends Player {
 
   /**
     * Function that return next move of computer player
-    * @param gameState: GameState -  actual state of the game
-    * @return Point - best predicted move
+    * @param gameState: actual state of the game
+    * @return best predicted move
     */
   override def makeMove(gameState: GameState): Point = {
     val possibleMoves = game.getEmptyPlaces(gameState)
@@ -26,12 +26,12 @@ class ComputerPlayer extends Player {
     * Function to predict best move for computer player.
     * Uses Negascout algorithm
     * Heuristic: to maximization of computer player score, offensive tactic
-    * @param gameState: GameState - next state of the game
-    * @param depth: Int - actual depht of an algorithm
-    * @param alpha: Int - param of Negascout algorithm
-    * @param beta: Int - param of Negascout algorithm
-    * @param color: Int - actual player: 1 means player that negascout predicts move, -1 it's opponent
-    * @return Int - score of actual move
+    * @param gameState next state of the game
+    * @param depth actual depht of an algorithm
+    * @param alpha param of Negascout algorithm
+    * @param beta  param of Negascout algorithm
+    * @param color actual player: 1 means player that negascout predicts move, -1 it's opponent
+    * @return score of actual move
     */
   private def Negascout(gameState: GameState, depth: Int, alpha: Int, beta: Int, color: Int): Int = {
     val possibleMoves = game.getEmptyPlaces(gameState)

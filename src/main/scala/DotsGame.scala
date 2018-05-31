@@ -10,8 +10,14 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control.{ButtonType, Dialog}
 
+/**
+  * DotsGame object that extends JFXApp
+  */
 object DotsGame extends JFXApp {
 
+  /**
+    * Starts application and shows setting dialog window
+    */
     def showSettingsDialog: GameSettings = {
       val dialog = new Dialog[GameSettings]() {
         initOwner(stage)

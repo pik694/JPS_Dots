@@ -7,6 +7,10 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.{GridPane, Pane, VBox}
 import scalafx.scene.text.Text
 
+/**
+  * Singleton game setting window
+  * Shown at the beginning of the game
+  */
 object GameSettingsPane extends Pane {
 
   private lazy val humanImage: Image = new Image(getClass.getResource("/icons/human.png").toString, 16, 16, true, true)
