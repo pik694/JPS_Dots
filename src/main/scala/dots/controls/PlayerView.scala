@@ -4,6 +4,9 @@ import dots.model.player.{ComputerPlayer, HumanPlayer, Player}
 import scalafx.scene.image.Image
 import scalafx.scene.paint.Color
 
+/**
+  * Represents player's view
+  */
 object PlayerView {
 
   private lazy val humanImage = new Image(getClass.getResource("/icons/human.png").toString, 16, 16, true, true)

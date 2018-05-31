@@ -11,6 +11,9 @@ import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
+/**
+ * Represents board's view
+ */
 public class BoardControl extends Pane {
 
     private IntegerProperty rows = new SimpleIntegerProperty();
@@ -21,6 +24,9 @@ public class BoardControl extends Pane {
     private ArrayList<DotView> circles = new ArrayList<>();
     private ArrayList<Line> connectionLines = new ArrayList<>();
 
+    /**
+     * Constructor
+     */
     public BoardControl() {
 
         rows.addListener((observable, oldValue, newValue) -> {
@@ -45,6 +51,10 @@ public class BoardControl extends Pane {
 
     }
 
+    /**
+     * Constructor
+     * @param children
+     */
     public BoardControl(Node... children) {
         super(children);
         rows.addListener((observable, oldValue, newValue) -> {
@@ -58,30 +68,58 @@ public class BoardControl extends Pane {
         });
     }
 
+    /**
+     * Getter
+     * @return number of rows
+     */
     public int getRows() {
         return rows.get();
     }
 
+    /**
+     * Getter
+     * @return rows property
+     */
     public IntegerProperty rowsProperty() {
         return rows;
     }
 
+    /**
+     * Getter
+     * @return number of columns
+     */
     public int getColumns() {
         return columns.get();
     }
 
+    /**
+     * Getter
+     * @return columns property
+     */
     public IntegerProperty columnsProperty() {
         return columns;
     }
 
+    /**
+     * Setter
+     * @param columns number of columns
+     */
     public void setColumns(int columns) {
         this.columns.set(columns);
     }
 
+    /**
+     * Setter
+     * @param rows number of rows
+     */
     public void setRows(int rows) {
         this.rows.set(rows);
     }
 
+    /**
+     * Draws dot
+     * @param dot to be drawn
+     */
     public void drawDot(DotView dot) {
 
         double y = heightProperty().doubleValue() / (rowLines.size() + 1) * (dot.row() + 1);
@@ -95,6 +133,12 @@ public class BoardControl extends Pane {
 
     }
 
+    /**
+     * Draws line
+     * @param start point
+     * @param end point
+     * @param color of that line
+     */
     public void drawLine(Point start, Point end, Color color) {
 
         ArrayList<Point> array = new ArrayList<>();
@@ -123,6 +167,11 @@ public class BoardControl extends Pane {
 
     }
 
+    /**
+     * Transforms mouse coordinates to board coordinates
+     * @param event mouse click event
+     * @return transformed coordinate
+     */
     public Point translate(MouseEvent event) {
 
         double xDistance = widthProperty().doubleValue() / (columnLines.size() + 1);
@@ -146,6 +195,11 @@ public class BoardControl extends Pane {
         return new Point(row, column);
     }
 
+
+    /**
+     * @param a
+     * @return coordinate
+     */
     private Integer getCoordinate(double a) {
         int a_ = ((int) (a * 10)) % 10;
         if (a_ < 4) {
@@ -155,6 +209,9 @@ public class BoardControl extends Pane {
         } else return null;
     }
 
+    /**
+     * Updates view
+     */
     private void update() {
 
         for (int i = 0; i < rowLines.size(); ++i) {
@@ -208,6 +265,10 @@ public class BoardControl extends Pane {
 
     }
 
+    /**
+     * Draw rows
+     * @param rows number of rows to draw
+     */
     private void generateRows(Integer rows) {
         for (int i = 0; i < rows; ++i) {
             Line line = new Line();
@@ -228,6 +289,10 @@ public class BoardControl extends Pane {
         }
     }
 
+    /**
+     * Draw columns
+     * @param columns number of columns to draw
+     */
     private void generateColumns(Integer columns) {
 
         for (int i = 0; i < columns; ++i) {
@@ -248,6 +313,5 @@ public class BoardControl extends Pane {
         }
 
     }
-
 
 }
