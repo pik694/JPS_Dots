@@ -1,10 +1,9 @@
 package dots.model.player
 
-import dots.model.{Dot, Game, MapDot, Point}
+import dots.model.{Dot, Point}
 import dots.model.utils.game.{Game, GameState}
-import org.scalatest.{FlatSpec, GivenWhenThen, Ignore, Matchers}
+import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 
-import scala.collection.immutable.HashMap
 
 class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
 
@@ -13,7 +12,7 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     (game, GameState(nextPlayer = playerA))
   }
 
-  it should "enable computer player to move on one of all dots" in {
+  ignore should "enable computer player to move on one of all dots" in {
 
     Given("an empty game")
     val playerA = new ComputerPlayer()
@@ -37,7 +36,7 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     val playerA = new ComputerPlayer()
     val playerB = new MockPlayer()
 
-    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, rows = 2, columns = 2)
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, rows = 3, columns = 3)
     playerA.game = game
 
     When("PlayerA is going to move")

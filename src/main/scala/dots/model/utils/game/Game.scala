@@ -1,7 +1,7 @@
 package dots.model.utils.game
 
 import dots.controllers.MainController
-import dots.model.player.Player
+import dots.model.player.{ComputerPlayer, Player}
 import dots.model.utils.Hull
 import dots.model.utils.game.GameState.BoardType
 import dots.model.{Dot, DotState, MapDot, Point}
@@ -14,6 +14,11 @@ private[model] class Game(
                            private val rows: Int,
                            private val columns: Int,
                          ) {
+  def getResultOfPlayer(gameState: GameState, player: Player): Int = {
+    val score = gameState.score
+    if(player == playerA) score._1 else score._2
+  }
+
 
   def isEndOfGame(state: GameState): Boolean = {
     state.board.size == rows * columns
@@ -33,8 +38,8 @@ private[model] class Game(
 
   def getEmptyPlaces(gameState: GameState): Seq[Point] = {
 
-    val tmpPoints: Seq[Point] = for (i <- 0 to rows;
-                                     j <- 0 to columns)
+    val tmpPoints: Seq[Point] = for (i <- 0 until rows;
+                                     j <- 0 until columns)
       yield Point(i, j)
 
     def emptyPlacesFilter(point: Point): Boolean = {

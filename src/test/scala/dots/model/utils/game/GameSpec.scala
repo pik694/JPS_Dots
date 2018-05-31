@@ -193,7 +193,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
     val (game, initialState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
 
     val initBoard = HashMap[Point, MapDot](
-      Point(0, 1) -> MapDot(playerA),
+      Point(1, 0) -> MapDot(playerA),
       Point(1, 2) -> MapDot(playerA),
       Point(2, 1) -> MapDot(playerA),
 
@@ -202,7 +202,7 @@ class GameSpec extends FlatSpec with Matchers with GivenWhenThen {
 
     When("I try to find a hull created by a missing point")
 
-    val missingPoint = Point(1, 0)
+    val missingPoint = Point(0, 1)
 
     val modifiedBoard = initBoard + (missingPoint -> MapDot(playerA))
 
