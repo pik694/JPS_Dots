@@ -1,11 +1,10 @@
 package dots.controllers
 
-import dots.controllers.MainController._
 import dots.model.player.{ComputerPlayer, HumanPlayer, Player}
 import scalafx.geometry.Insets
 import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{GridPane, Pane, VBox}
+import scalafx.scene.layout.{GridPane, HBox, Pane, VBox}
 import scalafx.scene.text.Text
 
 object GameSettingsPane extends Pane {
@@ -20,6 +19,16 @@ object GameSettingsPane extends Pane {
   private val columnSpinner = new Spinner[Int](1, 256, 10)
   private val rowSpinner = new Spinner[Int](1, 256, 10)
 
+  private val depthSpinner = new Spinner[Int](0, 256, 2)
+
+  private val playerAComputer = new ComputerPlayer
+  private val playerBComputer = new ComputerPlayer
+
+
+
+  depthSpinner.value.onChange((_,_, newValue) => {
+    //TODO
+  })
 
   children = new VBox(10) {
     padding = Insets(20)
@@ -61,7 +70,7 @@ object GameSettingsPane extends Pane {
         }, 0, 1)
         add(new ToggleButton {
           toggleGroup = playerAToggleGroup
-          userData = new ComputerPlayer
+          userData = playerAComputer
           graphic = new ImageView(computerImage)
         }, 1, 1)
         add(new ToggleButton {
@@ -72,11 +81,22 @@ object GameSettingsPane extends Pane {
         }, 2, 1)
         add(new ToggleButton {
           graphic = new ImageView(computerImage)
-          userData = new ComputerPlayer
+          userData = playerBComputer
           toggleGroup = playerBToggleGroup
 
         }, 3, 1)
+      },
+      new Separator,
+      new Text {
+        text = "Ustawienia komputera"
+        style = "-fx-font-size: 18; fx-font-weight: bold"
+      },
+      new HBox(5){
+        new Text("Głębokość przeszukiwania: ")
+        depthSpinner
       }
+
+
     )
   }
 
@@ -88,5 +108,7 @@ object GameSettingsPane extends Pane {
   def rows: Int = rowSpinner.value()
 
   def columns: Int = columnSpinner.value()
+
+  def depth: Int = depthSpinner.value()
 
 }
