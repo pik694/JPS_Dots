@@ -7,7 +7,7 @@ import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 
 class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
 
-  final def getGameAndInitialState(playerA: Player = new MockPlayer(), playerB: Player = new MockPlayer(), rows: Int = 10, columns: Int = 10): (Game, GameState) = {
+  final def getGameAndInitialState(playerA: Player = new MockPlayer(), playerB: Player = new MockPlayer(), rows: Int = 3, columns: Int = 3): (Game, GameState) = {
     val game = new Game(playerA, playerB, rows, columns)
     (game, GameState(nextPlayer = playerA))
   }
@@ -25,9 +25,9 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
 
     Then("move is one of possible dots")
     move.row should be >= 0
-    move.row should be < 10
+    move.row should be < 3
     move.column should be >= 0
-    move.column should be < 10
+    move.column should be < 3
   }
 
   "Negascout" should "find point that makes closed area" in {
@@ -37,7 +37,7 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     val playerA = new ComputerPlayer()
     val playerB = new MockPlayer()
 
-    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, 6 ,6)
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB)
     playerA.setGame(game)
     playerA.setNegascoutGepth(5)
 
