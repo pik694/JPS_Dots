@@ -4,7 +4,7 @@ import dots.model.player.{ComputerPlayer, HumanPlayer, Player}
 import scalafx.geometry.Insets
 import scalafx.scene.control._
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{GridPane, HBox, Pane, VBox}
+import scalafx.scene.layout.{GridPane, Pane, VBox}
 import scalafx.scene.text.Text
 
 object GameSettingsPane extends Pane {
@@ -12,6 +12,7 @@ object GameSettingsPane extends Pane {
   private lazy val humanImage: Image = new Image(getClass.getResource("/icons/human.png").toString, 16, 16, true, true)
   private lazy val computerImage: Image = new Image(getClass.getResource("/icons/computer.png").toString, 16, 16, true, true)
 
+  private val initDepth = 2
 
   private val playerAToggleGroup = new ToggleGroup()
   private val playerBToggleGroup = new ToggleGroup()
@@ -19,15 +20,17 @@ object GameSettingsPane extends Pane {
   private val columnSpinner = new Spinner[Int](1, 256, 10)
   private val rowSpinner = new Spinner[Int](1, 256, 10)
 
-  private val depthSpinner = new Spinner[Int](0, 256, 2)
+  private val depthSpinner = new Spinner[Int](0, 256, initDepth)
 
   private val playerAComputer = new ComputerPlayer
   private val playerBComputer = new ComputerPlayer
 
+  playerAComputer.setNegascoutGepth(initDepth)
+  playerBComputer.setNegascoutGepth(initDepth)
 
-
-  depthSpinner.value.onChange((_,_, newValue) => {
-    //TODO
+  depthSpinner.value.onChange((_, _, newValue) => {
+    playerAComputer.setNegascoutGepth(newValue)
+    playerBComputer.setNegascoutGepth(newValue)
   })
 
   children = new VBox(10) {
@@ -86,17 +89,14 @@ object GameSettingsPane extends Pane {
 
         }, 3, 1)
       },
+
       new Separator,
       new Text {
         text = "Ustawienia komputera"
         style = "-fx-font-size: 18; fx-font-weight: bold"
       },
-      new HBox(5){
-        new Text("Głębokość przeszukiwania: ")
-        depthSpinner
-      }
-
-
+      new Text("Głębokość przeszukiwania:"),
+      depthSpinner
     )
   }
 

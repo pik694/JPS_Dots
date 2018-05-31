@@ -39,8 +39,8 @@ class ComputerPlayer extends Player {
       color * game.getResultOfPlayer(gameState, this)
     else {
       var score: Int = 0
-      var alpha_ = alpha
 
+      var alpha_ = alpha
 
       for (i <- possibleMoves.indices if alpha_ < beta) {
         if (i == 0) {
