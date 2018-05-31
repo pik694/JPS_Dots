@@ -35,6 +35,9 @@ object Game {
     _playerB() = playerB
 
     delegate = new Game(playerA, playerB, rows, columns)
+    playerA.setGame(delegate)
+    playerB.setGame(delegate)
+
     _gameState = initialGameState
 
     _move() = initialGameState.nextPlayer
@@ -53,6 +56,7 @@ object Game {
 
   @tailrec
   def move(dot: Dot): Unit = {
+
     _gameState = delegate.move(_gameState, dot)
     _score() = _gameState.score
     _move() = _gameState.nextPlayer

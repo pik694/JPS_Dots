@@ -17,7 +17,7 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     Given("an empty game")
     val playerA = new ComputerPlayer()
     val (game, initState) = getGameAndInitialState(playerA = playerA)
-    playerA.game = game
+    playerA.setGame(game)
 
     When("playerA wants to make first move")
     val move = playerA.makeMove(initState)
@@ -37,7 +37,7 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     val playerB = new MockPlayer()
 
     val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, rows = 3, columns = 3)
-    playerA.game = game
+    playerA.setGame(game)
 
     When("PlayerA is going to move")
     val move = playerA.makeMove(initState +

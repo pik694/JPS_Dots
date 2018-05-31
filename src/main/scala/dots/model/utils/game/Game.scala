@@ -49,9 +49,17 @@ private[model] class Game(
     tmpPoints.filter(emptyPlacesFilter)
   }
 
-  def move(gameState: GameState, dot: Dot): GameState = {
+  def move(gameState: GameState, dot: Dot, draw: Boolean = true): GameState = {
+    def applyHull(gameState: GameState, hull: Hull): Unit = {
+
+      val dots = for (point <- hull.dots) yield Dot(point, gameState.nextPlayer)
+      if (draw) MainController.connectDots(dots)
+
+    }
+
     if (canMove(gameState, dot)) {
-      MainController.addDot(dot)
+      if (draw) MainController.addDot(dot)
+
       var modifiedState = gameState + dot
 
       val result: (Hull, GameState) = tryFindHull(modifiedState, dot)
@@ -241,13 +249,5 @@ private[model] class Game(
     findHull(Seq(dot.point))
 
   }
-
-  private def applyHull(gameState: GameState, hull: Hull): Unit= {
-
-    val dots = for (point <- hull.dots) yield Dot(point, gameState.nextPlayer)
-    MainController.connectDots(dots)
-
-  }
-
 
 }
