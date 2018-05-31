@@ -12,12 +12,13 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     (game, GameState(nextPlayer = playerA))
   }
 
-  ignore should "enable computer player to move on one of all dots" in {
+  it should "enable computer player to move on one of all dots" in {
 
     Given("an empty game")
     val playerA = new ComputerPlayer()
     val (game, initState) = getGameAndInitialState(playerA = playerA)
     playerA.setGame(game)
+    playerA.setNegascoutGepth(5)
 
     When("playerA wants to make first move")
     val move = playerA.makeMove(initState)
@@ -36,8 +37,9 @@ class ComputerPlayerSpec extends FlatSpec with Matchers with GivenWhenThen{
     val playerA = new ComputerPlayer()
     val playerB = new MockPlayer()
 
-    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, rows = 3, columns = 3)
+    val (game, initState) = getGameAndInitialState(playerA = playerA, playerB = playerB, 6 ,6)
     playerA.setGame(game)
+    playerA.setNegascoutGepth(5)
 
     When("PlayerA is going to move")
     val move = playerA.makeMove(initState +

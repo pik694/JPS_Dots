@@ -44,6 +44,10 @@ class ComputerPlayer extends Player {
     this.game = game
   }
 
+  def setNegascoutGepth(depth: Int): Unit = {
+    maxDepth = depth
+  }
+
   private var game: Game = _
-  private val maxDepth = 3
+  private var maxDepth: Int = _
 }
